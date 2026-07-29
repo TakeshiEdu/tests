@@ -1,0 +1,5194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ホスピタリティ論学習アプリ（小テスト版）</title>
+  <style>
+:root {
+  --blue: #004da8;
+  --blue-2: #0b63ce;
+  --ink: #111827;
+  --sub: #536176;
+  --line: #d9e3f0;
+  --soft: #f6f9fd;
+  --white: #fff;
+  --green: #10966c;
+  --orange: #f08a16;
+  --shadow: 0 12px 28px rgba(15, 36, 66, .06);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--white); }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--white);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+.lucide, [data-lucide] { width: 24px; height: 24px; color: currentColor; stroke: currentColor; flex: 0 0 auto; }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 4vw, 60px);
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+.brand, .top-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  font-weight: 800;
+}
+.brand { font-size: 20px; }
+.brand small { font-size: 16px; font-weight: 700; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 44px;
+  color: var(--blue);
+}
+.brand-mark .lucide { width: 36px; height: 36px; stroke-width: 1.9; }
+.top-actions { display: flex; align-items: center; gap: 28px; }
+.top-actions button { color: #4b5b70; }
+.top-actions .lucide { width: 23px; height: 23px; }
+.menu-button { display: none !important; flex-direction: column; gap: 0; font-size: 12px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 292px minmax(540px, 1fr) 318px;
+  gap: 30px;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 34px clamp(24px, 4vw, 60px) 54px;
+}
+body[data-view="home"] .layout,
+body[data-view="bookmarks"] .layout,
+body[data-view="mypage"] .layout {
+  display: block;
+  max-width: 1160px;
+}
+body[data-view="home"] .sidebar,
+body[data-view="home"] .rightbar,
+body[data-view="bookmarks"] .sidebar,
+body[data-view="bookmarks"] .rightbar,
+body[data-view="mypage"] .sidebar,
+body[data-view="mypage"] .rightbar { display: none; }
+body[data-view="quiz"] .layout { grid-template-columns: 292px minmax(560px, 1fr); }
+body[data-view="quiz"] .rightbar { display: none; }
+body[data-view="quiz-detail"] .layout { grid-template-columns: 292px minmax(560px, 1fr); }
+body[data-view="quiz-detail"] .rightbar { display: none; }
+body[data-view="quiz-question"] .layout { grid-template-columns: 292px minmax(560px, 1fr); }
+body[data-view="quiz-question"] .rightbar { display: none; }
+body[data-view="text"] .layout { grid-template-columns: 292px minmax(560px, 1fr); }
+body[data-view="text"] .rightbar { display: none; }
+body[data-view="chapter-detail"] .layout { grid-template-columns: 292px minmax(560px, 1fr); }
+body[data-view="chapter-detail"] .rightbar { display: none; }
+
+.panel, .progress-card, .home-card, .notice-card, .lesson-card, .bookmark-card, .profile-card, .profile-link {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.panel { padding: 22px; }
+.panel h2, .nav-panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  color: var(--blue);
+  font-size: 21px;
+}
+.panel h2 .lucide, .nav-panel h2 .lucide { width: 28px; height: 28px; }
+
+.progress-card { padding: 26px 30px; }
+.progress-card.bare { padding: 0; border: 0; }
+.progress-meta {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  gap: 26px;
+  margin-bottom: 14px;
+  font-weight: 800;
+}
+.progress-meta b { font-size: 34px; }
+.progress-meta small { justify-self: end; color: var(--ink); font-size: 18px; font-weight: 500; }
+.progress-track { height: 12px; overflow: hidden; background: #e8edf4; border-radius: 999px; }
+.progress-track span { display: block; height: 100%; background: var(--blue); border-radius: inherit; }
+
+.home-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  gap: 26px;
+}
+.home-page h1 { margin: 0; font-size: 30px; }
+.continue-button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 28px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), #003f94);
+  border: 0;
+  border-radius: 7px;
+  box-shadow: 0 14px 26px rgba(0,77,168,.18);
+  font-size: 22px;
+  font-weight: 900;
+}
+.continue-button .lucide { justify-self: end; }
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+}
+.home-card {
+  display: grid;
+  grid-template-columns: 82px 1fr 24px;
+  align-items: center;
+  min-height: 126px;
+  padding: 24px 28px;
+  color: var(--blue);
+  text-align: left;
+}
+.home-card > .lucide:first-child { width: 56px; height: 56px; stroke-width: 1.8; }
+.home-card b { display: block; color: var(--blue); font-size: 22px; }
+.home-card small { display: block; margin-top: 8px; color: var(--ink); font-size: 16px; }
+.notice-card {
+  display: grid;
+  grid-template-columns: 1fr auto 24px;
+  align-items: center;
+  gap: 24px;
+  min-height: 116px;
+  padding: 26px 30px;
+  text-align: left;
+}
+.notice-card b { display: block; margin-bottom: 12px; color: var(--blue); font-size: 22px; }
+.notice-card small, .notice-card time { color: var(--ink); font-size: 17px; }
+
+.chapter-list { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 16px; }
+.chapter-head, .chapter-link, .outline-wide {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  text-align: left;
+  font-weight: 800;
+}
+.chapter-head {
+  flex-wrap: nowrap;
+}
+.chapter-head span {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.chapter-head strong {
+  min-width: 0;
+  line-height: 1.35;
+}
+.chapter-head .lucide { margin-left: auto; width: 18px; }
+.chapter-link { font-weight: 600; }
+.chapter-link span { min-width: 34px; }
+.chapter-link strong {
+  min-width: 0;
+  line-height: 1.35;
+}
+.chapter-link.active { color: var(--blue); background: #edf4ff; font-weight: 900; }
+.outline-wide {
+  justify-content: center;
+  margin-top: 14px;
+  color: var(--blue);
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.textbook-index-nav h2 {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.index-progress {
+  margin: 20px 0 28px;
+}
+
+.index-progress > div:first-child,
+.index-progress > div:nth-child(2) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.index-progress span {
+  color: var(--sub);
+  font-weight: 800;
+}
+
+.index-progress small {
+  color: var(--sub);
+}
+
+.toc-nav {
+  display: grid;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.toc-nav h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.toc-nav button {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  text-align: left;
+  line-height: 1.5;
+  font-weight: 700;
+}
+.toc-nav button span {
+  white-space: nowrap;
+}
+.toc-nav button strong {
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.chapter-detail-nav .toc-nav {
+  gap: 0;
+}
+
+.toc-section {
+  border-top: 1px solid var(--line);
+}
+
+.toc-section:first-of-type {
+  border-top: 0;
+}
+
+.toc-section > button {
+  grid-template-columns: 58px 1fr 18px;
+  min-height: 50px;
+}
+
+.toc-section > button .lucide {
+  width: 18px;
+  height: 18px;
+  color: var(--blue);
+}
+
+.toc-section.open > button {
+  color: var(--blue);
+  font-weight: 900;
+}
+
+.toc-lesson-list {
+  display: none;
+  padding: 4px 0 12px 14px;
+}
+
+.toc-section.open .toc-lesson-list {
+  display: grid;
+  gap: 4px;
+}
+
+.toc-lesson-list button {
+  grid-template-columns: 48px 1fr;
+  min-height: 38px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.toc-lesson-list button.active {
+  color: var(--blue);
+  background: #edf4ff;
+  font-weight: 900;
+}
+
+.toc-nav button span {
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.textbook-index-page h1 {
+  margin: 0 0 26px;
+  font-size: 28px;
+}
+
+.toc-card-list {
+  display: grid;
+  gap: 18px;
+}
+
+.toc-card {
+  display: grid;
+  grid-template-columns: 58px 1fr 24px;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  min-height: 106px;
+  padding: 22px 26px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.toc-card > .lucide:first-child {
+  width: 40px;
+  height: 40px;
+  color: var(--blue);
+}
+
+.toc-card > .lucide:last-child {
+  color: var(--blue);
+}
+
+.toc-card b,
+.toc-card strong,
+.toc-card small {
+  display: block;
+}
+
+.toc-card b {
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+
+.toc-card strong {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.toc-card small {
+  color: var(--ink);
+}
+
+.chapter-detail-page {
+  padding-bottom: 28px;
+}
+
+.chapter-detail-head {
+  margin-bottom: 24px;
+}
+
+.chapter-detail-head h1 {
+  margin: 0 0 18px;
+  color: var(--ink);
+  font-size: 30px;
+  line-height: 1.35;
+}
+
+.chapter-detail-head p {
+  margin: 0;
+  max-width: 780px;
+  color: var(--sub);
+  font-size: 16px;
+  line-height: 1.9;
+  font-weight: 700;
+}
+
+.chapter-lesson-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.chapter-lesson-card {
+  display: grid;
+  grid-template-columns: 52px 64px minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  min-height: 118px;
+  padding: 22px 24px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.chapter-lesson-card > .lucide:first-child {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  width: 38px;
+  height: 38px;
+  color: var(--blue);
+}
+
+.chapter-lesson-card > .lucide:last-child {
+  grid-column: 4;
+  grid-row: 1 / 4;
+  align-self: center;
+  color: var(--blue);
+}
+
+.chapter-lesson-card b,
+.chapter-lesson-card strong,
+.chapter-lesson-card small,
+.chapter-lesson-card em {
+  display: block;
+}
+
+.chapter-lesson-card b {
+  margin-bottom: 5px;
+  color: var(--blue);
+}
+
+.chapter-lesson-card > span {
+  grid-column: 2;
+  grid-row: 1;
+  color: var(--ink);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.chapter-lesson-card strong {
+  grid-column: 3;
+  grid-row: 1;
+  min-width: 0;
+  margin-bottom: 0;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.chapter-lesson-card small {
+  grid-column: 2 / 4;
+  grid-row: 2;
+  min-width: 0;
+  color: var(--sub);
+  line-height: 1.65;
+}
+
+.chapter-lesson-card em {
+  grid-column: 2 / 4;
+  grid-row: 3;
+  margin-top: 8px;
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 800;
+}
+
+.chapter-pager {
+  margin-top: 34px;
+}
+
+.chapter-detail-footer {
+  display: grid;
+  grid-template-columns: 140px 1fr 140px;
+  align-items: center;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+.chapter-detail-footer span {
+  justify-self: center;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.chapter-detail-footer .outline-button {
+  display: inline-flex;
+}
+
+.chapter-detail-footer .outline-button:last-child {
+  justify-self: end;
+}
+
+.quiz-index-sidebar h1 {
+  margin: 0 0 24px;
+  font-size: 26px;
+}
+
+.quiz-index-sidebar .progress-card {
+  margin-bottom: 30px;
+}
+
+.progress-pages {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  color: var(--sub);
+}
+
+.quiz-index-sidebar h2 {
+  margin: 0 0 14px;
+  color: var(--blue);
+  font-size: 17px;
+}
+
+.quiz-chapter-list {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.quiz-chapter-list button {
+  display: grid;
+  grid-template-columns: 58px 1fr 22px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+
+.quiz-chapter-list button:first-child {
+  border-top: 0;
+}
+
+.quiz-chapter-list span,
+.quiz-chapter-list strong {
+  font-size: 14px;
+}
+
+.quiz-chapter-list .lucide {
+  color: var(--blue);
+  width: 18px;
+  height: 18px;
+}
+
+.quiz-help-card {
+  margin-top: 30px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.quiz-help-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  color: var(--blue);
+  font-size: 17px;
+}
+
+.quiz-help-card p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.quiz-detail-list {
+  border-radius: 8px;
+}
+
+.quiz-section {
+  border-top: 1px solid var(--line);
+}
+
+.quiz-section:first-child {
+  border-top: 0;
+}
+
+.quiz-section > button {
+  border-top: 0;
+}
+
+.quiz-section.open > button {
+  color: var(--blue);
+  background: #f7fbff;
+  font-weight: 900;
+}
+
+.quiz-lesson-list {
+  display: none;
+  padding: 2px 0 10px;
+  background: #fff;
+}
+
+.quiz-section.open .quiz-lesson-list {
+  display: grid;
+}
+
+.quiz-lesson-list button {
+  grid-template-columns: 44px 1fr auto;
+  min-height: 43px;
+  padding: 0 16px 0 22px;
+  border-top: 1px solid #eef3f9;
+}
+
+.quiz-lesson-list button.active {
+  color: var(--blue);
+  background: #edf4ff;
+}
+
+.quiz-lesson-list small {
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.quiz-index-page {
+  min-height: 680px;
+  display: grid;
+}
+
+.empty-quiz-panel {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 680px;
+  padding: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.empty-quiz-panel > .lucide {
+  width: 58px;
+  height: 58px;
+  padding: 12px;
+  color: var(--blue);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.empty-quiz-panel h1 {
+  margin: 22px 0 8px;
+  font-size: 24px;
+}
+
+.empty-quiz-panel p {
+  margin: 0 0 78px;
+  color: var(--sub);
+  font-weight: 700;
+}
+
+.empty-quiz-panel button {
+  min-width: 350px;
+  min-height: 70px;
+  color: #a4adbb;
+  background: #eef1f6;
+  border: 0;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.empty-quiz-panel button small {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quiz-detail-page {
+  display: grid;
+  min-height: 680px;
+}
+
+.quiz-detail-head {
+  margin-bottom: 18px;
+}
+
+.quiz-detail-head h1 {
+  margin: 0 0 24px;
+  font-size: 30px;
+  line-height: 1.35;
+}
+
+.quiz-detail-head h2 {
+  margin: 0;
+  color: var(--blue);
+  font-size: 19px;
+}
+
+.quiz-question-cards {
+  display: grid;
+  gap: 16px;
+  align-self: start;
+}
+
+.quiz-question-card {
+  display: grid;
+  grid-template-columns: 56px 1fr auto 150px;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  min-height: 80px;
+  padding: 0 24px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.quiz-question-card.selected {
+  border-color: #8db8f1;
+  background: #fbfdff;
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+
+.quiz-question-number {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.quiz-question-card strong {
+  font-size: 18px;
+}
+
+.quiz-question-card small {
+  color: var(--ink);
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+.quiz-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  color: var(--blue);
+  border: 1px solid #9dbceb;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.quiz-card-action .lucide {
+  width: 18px;
+  height: 18px;
+}
+
+.quiz-detail-footer {
+  display: grid;
+  grid-template-columns: 190px minmax(240px, 340px);
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.quiz-detail-footer .outline-button {
+  display: inline-flex;
+  justify-content: center;
+  min-height: 58px;
+}
+
+.continue-selected {
+  min-height: 58px;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.continue-selected small {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.continue-selected:disabled {
+  color: #9fa9b8;
+  background: #eef1f6;
+  cursor: default;
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 28px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 800;
+}
+.breadcrumbs button { padding: 0; color: var(--blue); background: transparent; border: 0; font-weight: 800; }
+.breadcrumbs strong { color: var(--ink); }
+.lesson-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.lesson-header > div { display: flex; align-items: center; gap: 20px; }
+.lesson-number {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 6px;
+  font-size: 24px;
+  font-weight: 900;
+}
+.lesson-header h1 { margin: 0; font-size: 38px; }
+.outline-button {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 18px;
+  color: var(--blue);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-weight: 800;
+}
+.outline-button.saved { color: #fff; background: var(--blue); }
+.lead { margin: 0 0 30px; font-size: 18px; line-height: 1.9; }
+.lesson-card {
+  display: grid;
+  grid-template-columns: 46px 1fr 24px;
+  gap: 18px;
+  align-items: start;
+  min-height: 106px;
+  margin-top: 20px;
+  padding: 24px 26px;
+  border-left: 6px solid var(--blue);
+}
+.lesson-card > .lucide:first-child { width: 36px; height: 36px; color: var(--blue); }
+.lesson-card h2 { margin: 0 0 8px; color: var(--blue); font-size: 21px; }
+.lesson-card p, .lesson-card ul { margin: 0; line-height: 1.8; }
+.lesson-card.point { border-left-color: var(--green); background: #fbfffd; }
+.lesson-card.point h2, .lesson-card.point > .lucide:first-child { color: var(--green); }
+.lesson-card.caution { border-left-color: var(--orange); background: #fffdfa; }
+.lesson-card.caution h2, .lesson-card.caution > .lucide:first-child { color: var(--orange); }
+
+.pager {
+  display: grid;
+  grid-template-columns: 150px 1fr 150px;
+  align-items: center;
+  gap: 18px;
+  margin-top: 28px;
+}
+.pager button {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--blue);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-weight: 900;
+}
+.pager .primary { color: #fff; background: var(--blue); border-color: var(--blue); }
+.pager strong { text-align: center; font-size: 18px; }
+
+.point-list { margin: 0; padding-left: 1.2em; line-height: 2.1; font-weight: 700; }
+.compact-list .panel-head, .side-quiz .panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.panel-head button { color: var(--blue); background: transparent; border: 0; font-weight: 800; }
+.compact-list button:not(.panel-head button) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+.compact-list small { color: var(--sub); }
+.side-quiz p { line-height: 1.7; font-weight: 800; }
+.side-quiz label { display: flex; gap: 10px; margin: 13px 0; line-height: 1.5; }
+.side-quiz input { width: 20px; height: 20px; accent-color: var(--blue); }
+
+.quiz-page h1 { margin: 0; font-size: 30px; }
+.quiz-page h1 span { color: var(--blue); font-size: 42px; }
+.quiz-question-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 30px 0 24px;
+}
+.question-progress {
+  height: 8px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  background: #e8edf4;
+  border-radius: 999px;
+}
+.question-progress span {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+  border-radius: inherit;
+}
+.question { margin: 0 0 36px; font-size: 18px; line-height: 1.8; font-weight: 700; }
+.question-card {
+  margin-bottom: 26px;
+  padding: 28px 34px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.question-card p {
+  margin: 0 0 22px;
+  font-size: 18px;
+  line-height: 1.8;
+  font-weight: 800;
+}
+.statement-list {
+  display: grid;
+  gap: 20px;
+}
+.statement-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.9;
+  font-weight: 800;
+}
+.statement-row b {
+  color: var(--ink);
+}
+.choice-instruction {
+  margin: 0 0 18px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+}
+.choices { display: grid; gap: 24px; }
+.choices label {
+  min-height: 74px;
+  display: grid;
+  grid-template-columns: 24px 38px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-weight: 800;
+}
+.choices label.selected { color: var(--blue); border-color: #8db8f1; background: #fbfdff; }
+.choices input { width: 22px; height: 22px; accent-color: var(--blue); }
+.choice-combo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  color: var(--ink);
+  font-size: 18px;
+}
+.choice-combo span {
+  white-space: nowrap;
+}
+.choice-combo b {
+  margin-right: 4px;
+}
+.answer { display: none; margin: 20px 0 0; padding: 16px 18px; color: #0f6d4e; background: #e9f8f2; border-radius: 8px; font-weight: 800; }
+.answer.show { display: block; }
+.bookmark-inline { margin-top: 16px; display: inline-flex; align-items: center; gap: 10px; color: var(--blue); background: transparent; border: 0; font-weight: 900; }
+
+.page-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.page-title h1 { display: flex; align-items: center; gap: 12px; color: var(--blue); }
+.page-title button { color: var(--blue); background: transparent; border: 0; font-weight: 900; }
+.filter-tabs {
+  width: min(420px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 32px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.filter-tabs button { min-height: 42px; color: var(--blue); background: #fff; border: 0; border-left: 1px solid var(--line); font-weight: 900; }
+.filter-tabs button:first-child { border-left: 0; }
+.filter-tabs .active { color: #fff; background: var(--blue); }
+.bookmark-columns { display: grid; grid-template-columns: 420px 1fr; gap: 44px; }
+.bookmark-columns h2 { color: var(--blue); }
+.bookmark-card {
+  width: 100%;
+  min-height: 94px;
+  display: grid;
+  grid-template-columns: 52px 1fr auto 24px;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 18px;
+  color: var(--ink);
+  text-align: left;
+}
+.bookmark-card > span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 38px;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 5px;
+  font-weight: 900;
+}
+.bookmark-card b, .bookmark-card small { display: block; }
+.bookmark-card small { margin-top: 7px; line-height: 1.5; }
+.bookmark-card em { font-style: normal; white-space: nowrap; }
+.bookmark-card .lucide { color: var(--blue); }
+
+.mypage-page { display: grid; grid-template-columns: 292px 1fr; gap: 30px; }
+.mypage-menu {
+  min-height: 640px;
+  padding: 24px 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.mypage-menu h1 { display: flex; align-items: center; gap: 12px; margin: 0 0 24px; color: var(--blue); }
+.mypage-menu button, .profile-link {
+  width: 100%;
+  min-height: 56px;
+  display: grid;
+  grid-template-columns: 1fr 24px;
+  align-items: center;
+  padding: 0 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 0;
+  border-radius: 7px;
+  text-align: left;
+  font-weight: 900;
+}
+.mypage-menu button.active { color: var(--blue); background: #edf4ff; }
+.profile-head {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 34%, #8097bd 0 16%, transparent 17%), radial-gradient(circle at 50% 82%, #8097bd 0 34%, transparent 35%), #e8eef7;
+}
+.profile-head h1 { margin: 0 0 10px; font-size: 26px; }
+.profile-head p { margin: 0; font-size: 18px; }
+.profile-head button {
+  min-height: 48px;
+  padding: 0 20px;
+  color: var(--blue);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-weight: 900;
+}
+.profile-card { padding: 24px; }
+.profile-card h2 { margin: 0 0 18px; color: var(--blue); }
+.profile-card dl { margin: 0; border: 1px solid var(--line); border-radius: 7px; }
+.profile-card div { min-height: 58px; display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 0 20px; border-top: 1px solid var(--line); }
+.profile-card div:first-child { border-top: 0; }
+.profile-card dt { font-weight: 900; }
+.profile-card dd { margin: 0; font-size: 21px; font-weight: 900; }
+.profile-link { margin-top: 18px; border: 1px solid var(--line); }
+.mypage-main { min-width: 0; }
+.profile-data-card { margin-bottom: 24px; }
+.profile-data-card dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.profile-data-card .lucide { width: 22px; height: 22px; color: var(--blue); }
+.mypage-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.mypage-progress-grid .profile-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+.mypage-progress-grid p {
+  margin: 8px 0 0;
+  color: var(--sub);
+  font-weight: 800;
+}
+.mini-progress {
+  height: 10px;
+  overflow: hidden;
+  background: #e8edf4;
+  border-radius: 999px;
+}
+.profile-card .mini-progress {
+  display: block;
+  min-height: 10px;
+  padding: 0;
+  border: 0;
+}
+.mini-progress span {
+  display: block;
+  height: 100%;
+  background: var(--blue);
+  border-radius: inherit;
+}
+.profile-count {
+  margin: 0;
+  color: var(--blue) !important;
+  font-size: 34px;
+  font-weight: 900;
+}
+.record-list {
+  display: grid;
+  gap: 12px;
+}
+.profile-card .record-list {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+.record-list button {
+  width: 100%;
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 86px 1fr auto 24px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  text-align: left;
+  font-weight: 900;
+}
+.record-list span {
+  color: var(--blue);
+  font-size: 13px;
+}
+.record-list b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.record-list small {
+  color: var(--sub);
+  white-space: nowrap;
+}
+.empty-note {
+  margin: 0;
+  color: var(--sub);
+  line-height: 1.7;
+}
+.profile-edit-form {
+  display: grid;
+  gap: 16px;
+}
+.profile-edit-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+}
+.profile-edit-form input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.profile-edit-form button {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: 7px;
+  font-weight: 900;
+}
+.export-box {
+  max-height: 56vh;
+  overflow: auto;
+  padding: 14px;
+  background: #f6f9fd;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  white-space: pre-wrap;
+}
+
+.modal { position: fixed; inset: 0; z-index: 50; display: none; }
+.modal.open { display: block; }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .42); }
+.modal-panel {
+  position: relative;
+  width: min(640px, calc(100vw - 28px));
+  max-height: calc(100vh - 48px);
+  margin: 24px auto;
+  overflow: auto;
+  padding: 28px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, .28);
+}
+.lesson-modal .modal-panel {
+  width: min(920px, calc(100vw - 36px));
+  padding: 42px;
+}
+.lesson-modal #modalTitle { display: none; }
+.modal-close { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; display: grid; place-items: center; background: var(--soft); border: 0; border-radius: 50%; }
+.textbook-modal-detail {
+  color: var(--ink);
+}
+.textbook-modal-detail > header {
+  display: grid;
+  grid-template-columns: 78px 1fr auto;
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 28px;
+}
+.textbook-modal-detail > header > .lucide {
+  width: 62px;
+  height: 62px;
+  color: var(--blue);
+  stroke-width: 1.8;
+}
+.textbook-modal-detail.green > header > .lucide { color: #11866b; }
+.textbook-modal-detail.orange > header > .lucide { color: var(--orange); }
+.textbook-modal-detail header span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--blue);
+  font-weight: 900;
+}
+.textbook-modal-detail h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.3;
+}
+.textbook-modal-detail h2 {
+  margin: 26px 0 12px;
+  font-size: 19px;
+}
+.modal-lead {
+  margin: 0 0 26px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.8;
+}
+.modal-textbook-body {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 26px;
+  padding: 20px;
+  background: #f8fbff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.modal-textbook-body p {
+  margin: 0;
+  line-height: 1.85;
+}
+.modal-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.modal-table th,
+.modal-table td {
+  padding: 18px 20px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+  line-height: 1.7;
+}
+.modal-table tr:first-child th,
+.modal-table tr:first-child td { border-top: 0; }
+.modal-table th {
+  width: 190px;
+  color: var(--blue);
+  background: #f7fbff;
+  font-size: 17px;
+}
+.modal-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.modal-card-grid article {
+  min-height: 140px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.modal-card-grid b {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--blue);
+  font-size: 17px;
+}
+.modal-card-grid p {
+  margin: 0;
+  line-height: 1.65;
+}
+.modal-term-list {
+  display: grid;
+  gap: 10px;
+}
+.modal-term-list section {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.modal-term-list b {
+  color: var(--blue);
+}
+.modal-term-list p {
+  margin: 0;
+  line-height: 1.7;
+}
+.modal-warning {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 16px;
+  margin-top: 28px;
+  padding: 20px;
+  background: #fff9ef;
+  border: 1px solid #f0b45f;
+  border-radius: 8px;
+}
+.modal-warning > .lucide {
+  color: var(--orange);
+}
+.modal-warning h2 {
+  margin: 0 0 10px;
+  color: var(--orange);
+}
+.modal-warning ul {
+  margin: 0 0 12px 20px;
+  line-height: 1.7;
+}
+.modal-warning p {
+  margin: 0;
+  line-height: 1.7;
+}
+.modal-close-button {
+  display: block;
+  min-width: 220px;
+  min-height: 48px;
+  margin: 28px auto 0;
+  color: var(--blue);
+  background: #fff;
+  border: 1px solid #8db8f1;
+  border-radius: 7px;
+  font-weight: 900;
+}
+.search-box { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
+.search-box input { min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 7px; }
+.search-box button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #fff; background: var(--blue); border: 0; border-radius: 7px; font-weight: 900; }
+.toast { position: fixed; left: 50%; bottom: 28px; z-index: 60; transform: translate(-50%, 20px); padding: 12px 18px; color: #fff; background: #17243a; border-radius: 999px; opacity: 0; transition: .2s ease; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+.bottom-tabs { display: none; }
+
+@media (max-width: 1120px) {
+  .layout { grid-template-columns: 250px minmax(0, 1fr); }
+  .rightbar { display: none; }
+}
+
+@media (max-width: 760px) {
+  .topbar { height: 72px; padding: 0 18px; }
+  .brand { font-size: 16px; }
+  .brand small { font-size: 15px; }
+  .top-actions button:not(.menu-button) { display: none; }
+  .menu-button { display: inline-flex !important; }
+  .layout { display: block; padding: 24px 16px 96px; }
+  .sidebar, .rightbar { display: none; }
+  .sidebar.open {
+    position: fixed;
+    inset: 72px 0 74px auto;
+    z-index: 40;
+    display: block;
+    width: min(88vw, 340px);
+    padding: 16px;
+    overflow: auto;
+    background: var(--soft);
+    box-shadow: -18px 0 42px rgba(15, 23, 42, .18);
+  }
+  .home-page { gap: 22px; }
+  .home-page h1 { font-size: 22px; }
+  .progress-card { padding: 0; border: 0; }
+  .progress-meta { grid-template-columns: auto auto 1fr; gap: 16px; }
+  .progress-meta b { font-size: 26px; }
+  .progress-meta small { font-size: 14px; }
+  .continue-button { min-height: 50px; padding: 0 18px; font-size: 17px; }
+  .home-grid { gap: 12px; }
+  .home-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    min-height: 112px;
+    padding: 18px 10px;
+    text-align: center;
+  }
+  .home-card > .lucide:first-child { width: 40px; height: 40px; }
+  .home-card b { font-size: 17px; }
+  .home-card small, .home-card > .lucide:last-child { display: none; }
+  .notice-card { grid-template-columns: 1fr 24px; min-height: 124px; padding: 18px 14px; }
+  .notice-card time { grid-column: 1; font-size: 14px; }
+  .lesson-header { align-items: flex-start; }
+  .lesson-header h1 { font-size: 28px; }
+  .lesson-number { width: 54px; height: 48px; font-size: 19px; }
+  .outline-button { display: none; }
+  .lead, .question { font-size: 15px; }
+  .quiz-question-head {
+    align-items: flex-start;
+    margin: 22px 0 18px;
+  }
+  .quiz-page h1 {
+    font-size: 22px;
+  }
+  .quiz-page h1 span {
+    font-size: 34px;
+  }
+  .question-card {
+    padding: 18px 14px;
+  }
+  .question-card p,
+  .choice-instruction {
+    font-size: 15px;
+  }
+  .statement-list {
+    gap: 14px;
+  }
+  .statement-row {
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 10px;
+    font-size: 15px;
+  }
+  .lesson-card { grid-template-columns: 38px 1fr 20px; padding: 18px 14px; }
+  .lesson-card > .lucide:first-child { width: 30px; height: 30px; }
+  .lesson-card h2 { font-size: 18px; }
+  .lesson-card p, .lesson-card ul { font-size: 14px; }
+  body[data-view="text"] .sidebar,
+  body[data-view="chapter-detail"] .sidebar {
+    display: block;
+    float: left;
+    width: 42%;
+    padding-right: 14px;
+  }
+  body[data-view="text"] .content,
+  body[data-view="chapter-detail"] .content {
+    margin-left: 42%;
+  }
+  body[data-view="text"] .nav-panel,
+  body[data-view="chapter-detail"] .nav-panel {
+    padding: 12px 0;
+    border: 0;
+  }
+  body[data-view="text"] .textbook-index-nav h2,
+  body[data-view="chapter-detail"] .textbook-index-nav h2 {
+    font-size: 16px;
+  }
+  body[data-view="text"] .index-progress,
+  body[data-view="chapter-detail"] .index-progress {
+    font-size: 12px;
+  }
+  body[data-view="text"] .toc-nav button,
+  body[data-view="chapter-detail"] .toc-nav button {
+    grid-template-columns: 48px 1fr;
+    font-size: 11px;
+  }
+  body[data-view="chapter-detail"] .toc-section > button {
+    grid-template-columns: 42px 1fr 16px;
+  }
+  .toc-lesson-list {
+    padding-left: 6px;
+  }
+  .toc-lesson-list button {
+    grid-template-columns: 38px 1fr;
+    min-height: 34px;
+  }
+  .textbook-index-page h1 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .toc-card-list {
+    gap: 8px;
+  }
+  .toc-card {
+    grid-template-columns: 36px 1fr 18px;
+    gap: 10px;
+    min-height: 92px;
+    padding: 12px;
+  }
+  .toc-card > .lucide:first-child {
+    width: 28px;
+    height: 28px;
+  }
+  .toc-card strong {
+    font-size: 12px;
+  }
+  .toc-card small,
+  .toc-card b {
+    font-size: 11px;
+  }
+  .chapter-detail-head h1 {
+    font-size: 20px;
+  }
+  .chapter-detail-head p {
+    font-size: 13px;
+  }
+  .chapter-lesson-cards {
+    gap: 8px;
+  }
+  .chapter-lesson-card {
+    grid-template-columns: 28px minmax(0, 1fr) 16px;
+    gap: 10px;
+    min-height: 108px;
+    padding: 12px;
+  }
+  .chapter-lesson-card > .lucide:first-child {
+    grid-column: 1;
+    width: 28px;
+    height: 28px;
+  }
+  .chapter-lesson-card > .lucide:last-child {
+    grid-column: 3;
+  }
+  .chapter-lesson-card > span,
+  .chapter-lesson-card strong,
+  .chapter-lesson-card small,
+  .chapter-lesson-card em {
+    grid-column: 2;
+  }
+  .chapter-lesson-card > span {
+    grid-row: 1;
+    color: var(--blue);
+    font-size: 11px;
+  }
+  .chapter-lesson-card strong {
+    grid-row: 2;
+    font-size: 13px;
+  }
+  .chapter-lesson-card small {
+    grid-row: 3;
+  }
+  .chapter-lesson-card em {
+    grid-row: 4;
+  }
+  .chapter-lesson-card small,
+  .chapter-lesson-card b,
+  .chapter-lesson-card em {
+    font-size: 11px;
+  }
+  .chapter-detail-footer {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .chapter-detail-footer span {
+    order: -1;
+  }
+  .chapter-detail-footer .outline-button,
+  .chapter-detail-footer .outline-button:last-child {
+    display: inline-flex;
+    justify-self: stretch;
+  }
+  body[data-view="quiz"] .sidebar,
+  body[data-view="quiz-detail"] .sidebar {
+    display: block;
+  }
+  .quiz-index-sidebar h1 {
+    font-size: 22px;
+  }
+  .quiz-index-sidebar .progress-card {
+    padding: 18px 14px;
+    border: 1px solid var(--line);
+  }
+  .quiz-chapter-list button {
+    grid-template-columns: 48px 1fr 18px;
+    min-height: 46px;
+    padding: 0 12px;
+  }
+  .quiz-chapter-list span,
+  .quiz-chapter-list strong {
+    font-size: 12px;
+  }
+  .quiz-help-card {
+    padding: 16px;
+  }
+  .quiz-index-page {
+    min-height: 360px;
+    margin-top: 18px;
+  }
+  .quiz-lesson-list button {
+    grid-template-columns: 36px 1fr auto;
+    padding: 0 10px 0 14px;
+  }
+  .quiz-lesson-list span,
+  .quiz-lesson-list strong,
+  .quiz-lesson-list small {
+    font-size: 11px;
+  }
+  .quiz-detail-page {
+    min-height: 360px;
+    margin-top: 18px;
+  }
+  .quiz-detail-head h1 {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .quiz-detail-head h2 {
+    font-size: 16px;
+  }
+  .quiz-question-cards {
+    gap: 10px;
+  }
+  .quiz-question-card {
+    grid-template-columns: 38px 1fr;
+    min-height: 96px;
+    padding: 12px;
+  }
+  .quiz-question-card small {
+    grid-column: 2;
+  }
+  .quiz-card-action {
+    grid-column: 1 / -1;
+    min-height: 40px;
+  }
+  .quiz-question-number,
+  .quiz-question-card strong {
+    font-size: 13px;
+  }
+  .quiz-detail-footer {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+  .empty-quiz-panel {
+    min-height: 360px;
+    padding: 24px 14px;
+  }
+  .empty-quiz-panel p {
+    margin-bottom: 46px;
+  }
+  .empty-quiz-panel button {
+    min-width: 0;
+    width: 100%;
+  }
+  .pager { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .choices {
+    gap: 10px;
+  }
+  .choices label {
+    grid-template-columns: 22px 30px minmax(0, 1fr);
+    min-height: 66px;
+    gap: 10px;
+    padding: 12px;
+  }
+  .choice-combo {
+    gap: 8px 14px;
+    font-size: 14px;
+  }
+  .pager button { min-height: 42px; font-size: 13px; }
+  .pager strong { font-size: 14px; }
+  .choices { gap: 12px; }
+  .choices label { min-height: 62px; padding: 0 14px; font-size: 14px; }
+  .bookmark-columns, .mypage-page { display: block; }
+  .bookmark-card { grid-template-columns: 42px 1fr auto; padding: 14px 12px; }
+  .bookmark-card .lucide { display: none; }
+  .mypage-menu { display: none; }
+  .mypage-main { display: block; }
+  .profile-head { grid-template-columns: 68px 1fr; gap: 14px; }
+  .avatar { width: 64px; height: 64px; }
+  .profile-head h1 { font-size: 18px; }
+  .profile-head p { font-size: 14px; }
+  .profile-head button { grid-column: 2; justify-self: start; min-height: 36px; font-size: 13px; }
+  .profile-card { padding: 14px; }
+  .profile-card h2 { font-size: 16px; }
+  .profile-card div { min-height: 48px; padding: 0 12px; }
+  .profile-card dd { font-size: 18px; }
+  .mypage-progress-grid { grid-template-columns: 1fr; gap: 12px; }
+  .mypage-progress-grid .profile-card { min-height: 130px; }
+  .record-list button {
+    grid-template-columns: 70px minmax(0, 1fr) 18px;
+    min-height: 68px;
+    padding: 12px;
+  }
+  .record-list small {
+    grid-column: 2;
+  }
+  .record-list .lucide {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+  .lesson-modal .modal-panel {
+    width: calc(100vw - 28px);
+    padding: 26px 18px;
+  }
+  .textbook-modal-detail > header {
+    grid-template-columns: 42px 1fr;
+    gap: 12px;
+  }
+  .textbook-modal-detail > header > .lucide {
+    width: 36px;
+    height: 36px;
+  }
+  .textbook-modal-detail header .outline-button {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+  }
+  .textbook-modal-detail h1 { font-size: 22px; }
+  .textbook-modal-detail h2 { font-size: 16px; }
+  .modal-lead { font-size: 15px; }
+  .modal-textbook-body {
+    padding: 14px;
+  }
+  .modal-table th,
+  .modal-table td {
+    display: block;
+    width: 100%;
+    padding: 12px;
+  }
+  .modal-table td {
+    border-top: 1px solid var(--line);
+  }
+  .modal-card-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-card-grid article {
+    min-height: 0;
+  }
+  .modal-term-list section {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .modal-warning {
+    grid-template-columns: 28px 1fr;
+    padding: 14px;
+  }
+  .bottom-tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    min-height: 74px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid var(--line);
+  }
+  .bottom-tabs button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #66758a;
+    background: transparent;
+    border: 0;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .bottom-tabs button::before { position: absolute; top: 0; left: 24%; right: 24%; height: 3px; background: transparent; border-radius: 0 0 999px 999px; content: ""; }
+  .bottom-tabs button.active { color: var(--blue); background: linear-gradient(180deg, #f2f7ff 0%, #fff 48%); }
+  .bottom-tabs button.active::before { background: var(--blue); }
+  .bottom-tabs .lucide { width: 24px; height: 24px; }
+}
+
+  </style>
+</head>
+<body data-view="home">
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" type="button" data-view="home" aria-label="ホームへ移動">
+        <span class="brand-mark"><i data-lucide="shield-plus"></i></span>
+        <span>ホスピタリティ論<small>小テスト版</small></span>
+      </button>
+      <nav class="top-actions" aria-label="トップメニュー">
+        <button type="button" data-action="open-search"><i data-lucide="search"></i><span>検索</span></button>
+        <button type="button" data-view="bookmarks"><i data-lucide="bookmark"></i><span>ブックマーク</span></button>
+        <button type="button" data-view="mypage"><i data-lucide="circle-user-round"></i><span>マイページ</span></button>
+        <button class="menu-button" type="button" id="mobileMenu" aria-label="メニュー" aria-expanded="false">
+          <i data-lucide="menu"></i><span>メニュー</span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar" id="chapterNav" aria-label="章ナビゲーション"></aside>
+      <article class="content" id="mainContent" aria-live="polite"></article>
+      <aside class="rightbar" id="rightbar" aria-label="補助情報"></aside>
+    </main>
+
+    <nav class="bottom-tabs" aria-label="下部ナビゲーション">
+      <button type="button" data-view="home"><i data-lucide="house"></i><span>ホーム</span></button>
+      <button type="button" data-view="text"><i data-lucide="book-open"></i><span>テキスト</span></button>
+      <button type="button" data-view="quiz"><i data-lucide="square-pen"></i><span>問題演習</span></button>
+      <button type="button" data-view="bookmarks"><i data-lucide="bookmark"></i><span>ブックマーク</span></button>
+      <button type="button" data-view="mypage"><i data-lucide="circle-user-round"></i><span>マイページ</span></button>
+    </nav>
+  </div>
+
+  <div class="modal" id="appModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-backdrop" data-action="close-modal"></div>
+    <section class="modal-panel" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" data-action="close-modal" aria-label="閉じる"><i data-lucide="x"></i></button>
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+window.QUIZ_DATA = {
+  "chapters": [
+    { "id": "1", "title": "ホスピタリティ・マネジメントのフレームワーク", "pages": 3, "questionCount": 11 },
+    { "id": "2", "title": "サービスの特性とホスピタリティ・マネジメントの課題", "pages": 3, "questionCount": 11 },
+    { "id": "3", "title": "サービス商品の構造", "pages": 3, "questionCount": 11 },
+    { "id": "4", "title": "サービスの品質", "pages": 3, "questionCount": 11 },
+    { "id": "5", "title": "サービス商品の設計", "pages": 3, "questionCount": 11 },
+    { "id": "6", "title": "サービス提供システム（サービスの失敗と修復）", "pages": 3, "questionCount": 11 },
+    { "id": "7", "title": "顧客志向の文化と組織", "pages": 3, "questionCount": 11 }
+  ],
+  "questions": [
+    // --- 第1章 ---
+    {
+      "id": "1-1",
+      "questionNumber": 1,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 1,
+      "title": "ホスピタリティの語源",
+      "page": 1,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "ホスピタリティという言葉は、古代ラテン語で「旅人を遇する宿主」を意味する（　）に由来する。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "ホスピタリティという言葉は、古代ラテン語で「旅人を遇する宿主」を意味する（　）に由来する。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "hospes（ホスペス）",
+          "hotel（ホテル）",
+          "hospital（病院）",
+          "service（サービス）"
+        ],
+        "answer": 0,
+        "explanation": "ホスピタリティという言葉は、古代ラテン語で「旅人を遇する宿主」を意味する hospes（ホスペス）に由来します。"
+      }
+    },
+    {
+      "id": "1-2",
+      "questionNumber": 2,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 2,
+      "title": "同語源の施設言葉",
+      "page": 1,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "ホスピタリティと同じ語源を持つ言葉には、ホテル（hotel）のほかに、病人のための施設から発展した（　）がある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "ホスピタリティと同じ語源を持つ言葉には、ホテル（hotel）のほかに、病人のための施設から発展した（　）がある。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "hospital（病院）",
+          "hostel（ホステル）",
+          "home（ホーム）",
+          "hospice（ホスピス）"
+        ],
+        "answer": 0,
+        "explanation": "hospital（病院）は hospes を語源とし、巡礼者や病人を保護・治療する施設から発展しました。"
+      }
+    },
+    {
+      "id": "1-3",
+      "questionNumber": 3,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 3,
+      "title": "清水滋氏のサービス定義",
+      "page": 1,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "清水滋氏は、サービス業で言うサービスとは接客態度などではなく「仕事（業務）そのもの」を指すと定義し、これを（　）サービスと呼んでいる。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "清水滋氏は、サービス業で言うサービスとは接客態度などではなく「仕事（業務）そのもの」を指すと定義し、これを（　）サービスと呼んでいる。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "機能的",
+          "感情的",
+          "有形的",
+          "コマーシャル"
+        ],
+        "answer": 0,
+        "explanation": "清水滋氏は接客マナーではなく、本来の業務そのものを「機能的サービス」と呼びました。"
+      }
+    },
+    {
+      "id": "1-4",
+      "questionNumber": 4,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 4,
+      "title": "コマーシャル・ホスピタリティ",
+      "page": 1,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "ホテルやレストランなどの企業が、サービス商品の価値の一部として意図的に設計した「心遣い」のことを、個人のものと区別して（　）・ホスピタリティと呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "ホテルやレストランなどの企業が、サービス商品の価値の一部として意図的に設計した「心遣い」のことを、個人のものと区別して（　）・ホスピタリティと呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "コマーシャル",
+          "パーソナル",
+          "ソーシャル",
+          "インダストリアル"
+        ],
+        "answer": 0,
+        "explanation": "企業がビジネス価値として意図的に組み込んだ心遣いを「コマーシャル・ホスピタリティ」と呼びます。"
+      }
+    },
+    {
+      "id": "1-5",
+      "questionNumber": 5,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 5,
+      "title": "コア・サービス",
+      "page": 1,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービス商品は複数の要素から成るパッケージであり、その中核となる機能（例：航空機の「目的地までの輸送」）を（　）・サービスと呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービス商品は複数の要素から成るパッケージであり、その中核となる機能（例：航空機の「目的地までの輸送」）を（　）・サービスと呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "コア",
+          "周辺",
+          "メイン",
+          "プライマリ"
+        ],
+        "answer": 0,
+        "explanation": "サービス商品の中核的機能を「コア・サービス」と呼びます。"
+      }
+    },
+    {
+      "id": "1-6",
+      "questionNumber": 6,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 6,
+      "title": "周辺サービスの定義",
+      "page": 1,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "周辺サービスの説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「周辺サービス」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "コア・サービスの機能を支援・補完したり、付加価値を加えたりする要素のこと",
+          "コア・サービスそのものの対価として支払われる主たる料金のこと",
+          "店舗の内装や従業員の外見などの有形部分のこと",
+          "従業員が個人の好意で行う接客マナーのこと"
+        ],
+        "answer": 0,
+        "explanation": "周辺サービスとは、コア・サービスを補完・付加価値化する要素（予約、チェックイン、手荷物処理など）です。"
+      }
+    },
+    {
+      "id": "1-7",
+      "questionNumber": 7,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 7,
+      "title": "サービスの結果とプロセス（過程）",
+      "page": 1,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "サービスの結果とプロセス（過程）に関する説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「サービスの結果とプロセス（過程）」に関する説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "目的地に着くといった結果の品質だけでなく、接客の丁寧さなどのプロセスの品質も評価に含まれるという考え方",
+          "サービスは形がないため結果の品質だけが評価対象となりプロセスの品質は考慮されないという考え方",
+          "プロセスが満足であれば結果が失敗であっても顧客は非常に高い満足を感じるという考え方",
+          "結果よりもプロセスのみを重視して商品価格を設定すべきであるという考え方"
+        ],
+        "answer": 0,
+        "explanation": "サービスでは「結果（目的地到着）」だけでなく「プロセス（接客・環境の心地よさ）」の品質も重要視されます。"
+      }
+    },
+    {
+      "id": "1-8",
+      "questionNumber": 8,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 8,
+      "title": "ホスピタリティ・マネジメントの三角形",
+      "page": 1,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "ホスピタリティ・マネジメントの三角形が結びつける3者の正しい組み合わせを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「ホスピタリティ・マネジメントの三角形」が結びつける3者の正しい組み合わせはどれか。",
+        "prompt": "最も適切な組み合わせを一つ選びなさい。",
+        "choices": [
+          "「サービス企業（経営者）」「顧客」「従業員」",
+          "「顧客」「株主」「取引先」",
+          "「経営者」「地域社会」「顧客」",
+          "「現場スタッフ」「管理者」「本部」"
+        ],
+        "answer": 0,
+        "explanation": "「サービス企業（経営者）」「顧客」「従業員」の3者の相互関係を有機的に結び顧客志向の活動を行うフレームワークです。"
+      }
+    },
+    {
+      "id": "1-9",
+      "questionNumber": 9,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 9,
+      "title": "顧客満足（CS）と事前確認（〇×）",
+      "page": 1,
+      "lead": "顧客満足（CS）に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "サービス商品は無形であるため、消費者は利用した人の口コミよりも、事前に商品を触って確認した結果を重視する。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）サービス商品は無形であるため、消費者は利用した人の口コミよりも、事前に商品を触って確認した結果を重視する。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】サービス商品は「無形性」があるため事前確認ができず、利用経験者の「口コミ」などを参考に判断します。"
+      }
+    },
+    {
+      "id": "1-10",
+      "questionNumber": 10,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 10,
+      "title": "不満の拡散力（〇×）",
+      "page": 1,
+      "lead": "顧客満足（CS）に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "満足した顧客は5人にその体験を話すが、不満足な顧客は11人に話すという調査データがあり、不満の拡散力は大きい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）満足した顧客は5人にその体験を話すが、不満足な顧客は11人に話すという調査データがあり、不満の拡散力は大きい。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】不満足な体験はポジティブな口コミの2倍以上の人数に拡散しやすい特性があります。"
+      }
+    },
+    {
+      "id": "1-11",
+      "questionNumber": 11,
+      "chapterId": "1",
+      "chapterTitle": "ホスピタリティ・マネジメントのフレームワーク",
+      "chapterQuestionIndex": 11,
+      "title": "コア・サービスと満足感（〇×）",
+      "page": 1,
+      "lead": "顧客満足（CS）に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "コア・サービスは、十分に提供されても顧客は「当たり前」と感じやすく、満足感の向上には繋がりにくい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）コア・サービスは、十分に提供されても顧客は「当たり前」と感じやすく、満足感の向上には繋がりにくい。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】コア・サービスは満たされて当たり前と感じられ、満足感向上には周辺サービスやホスピタリティが寄与します。"
+      }
+    },
+
+    // --- 第2章 ---
+    {
+      "id": "2-1",
+      "questionNumber": 12,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 1,
+      "title": "サービスの無形性と口コミ",
+      "page": 2,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービスは（　）という特性を持つため、消費者は事前に品質を確認できず、利用経験者の口コミなどを参考に判断する。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービスは（　）という特性を持つため、消費者は事前に品質を確認できず、利用経験者の口コミなどを参考に判断する。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "無形性 / 形がない",
+          "品質のバラツキ",
+          "不可逆性",
+          "時間的偏在"
+        ],
+        "answer": 0,
+        "explanation": "サービスには「無形性（形がない）」という特性があります。"
+      }
+    },
+    {
+      "id": "2-2",
+      "questionNumber": 13,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 2,
+      "title": "サービスの不可逆性",
+      "page": 2,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービスは生産と消費が同時に発生するため、製造業のように事前に検品することができない。そのため、一度提供された不良サービスは取り返しがつかない。これをサービスの（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービスは生産と消費が同時に発生するため事前検品ができず、一度提供された不良サービスは取り返しがつかない。これをサービスの（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "不可逆性",
+          "無形性",
+          "即時性",
+          "異質性"
+        ],
+        "answer": 0,
+        "explanation": "生産と消費の同時性ゆえに取り返しがつかない性質を「不可逆性」と呼びます。"
+      }
+    },
+    {
+      "id": "2-3",
+      "questionNumber": 14,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 3,
+      "title": "受身のビジネスと立地",
+      "page": 2,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービス業は店舗を構えて客を待つ「受身のビジネス」であるため、どこに店を出すかという（　）が経営の成否を大きく左右する。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービス業は店舗を構えて客を待つ「受身のビジネス」であるため、どこに店を出すかという（　）が経営の成否を大きく左右する。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "立地",
+          "価格",
+          "内装",
+          "広告"
+        ],
+        "answer": 0,
+        "explanation": "サービス業では「立地（出店場所）」が極めて重要な経営要素となります。"
+      }
+    },
+    {
+      "id": "2-4",
+      "questionNumber": 15,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 4,
+      "title": "チェーン・オペレーション",
+      "page": 2,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "本部に仕入れや加工機能を集中させ、同一規格の店舗を多数運営するビジネスモデルを（　）と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "本部に仕入れや加工機能を集中させ、同一規格の店舗を多数運営するビジネスモデルを（　）と呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "チェーン・オペレーション / 多店舗展開",
+          "ダイレクト・マーケティング",
+          "マス・カスタマイゼーション",
+          "サード・プレイス"
+        ],
+        "answer": 0,
+        "explanation": "同一規格店舗を多数展開するビジネスモデルを「チェーン・オペレーション」と呼びます。"
+      }
+    },
+    {
+      "id": "2-5",
+      "questionNumber": 16,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 5,
+      "title": "時間的偏在",
+      "page": 2,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "需要が特定の時間に集中したり、閑散期があったりすることを（　）という。サービスは在庫ができないため、この変動を平準化することが経営課題となる。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "需要が特定の時間に集中したり、閑散期があったりすることを（　）という。サービスは在庫ができないため、この変動を平準化することが経営課題となる。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "時間的偏在",
+          "品質の不均一",
+          "不可逆的変動",
+          "需要の拡散"
+        ],
+        "answer": 0,
+        "explanation": "時間帯や季節による需要の偏りを「時間的偏在」と呼びます。"
+      }
+    },
+    {
+      "id": "2-6",
+      "questionNumber": 17,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 6,
+      "title": "品質のバラツキ",
+      "page": 2,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "品質のバラツキの説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「品質のバラツキ」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "サービス生産は「人」が主体であるため、提供する従業員や体調・精神状況によって品質が一定にならないこと",
+          "原材料の不具合により製品の耐久性に個体差が生じること",
+          "地域によって顧客の要求水準が大きく異なること",
+          "価格変動により顧客が感じる価値が変わること"
+        ],
+        "answer": 0,
+        "explanation": "サービスは人が主体となって提供するため、従業員の体調や能力で品質が不均一（バラツキ）になります。"
+      }
+    },
+    {
+      "id": "2-7",
+      "questionNumber": 18,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 7,
+      "title": "マス・カスタマイゼーション",
+      "page": 2,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "マス・カスタマイゼーションの説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「マス・カスタマイゼーション」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "ITを活用し、一人ひとりの顧客の要望に合わせた個別対応を大量生産並みの効率と低コストで実現する手法",
+          "同一規格の標準化商品を一度に大量生産して極限まで低コスト化する手法",
+          "顧客にセルフサービスを行わせることで店舗側の省力化を図る手法",
+          "職人による手作りで高額なオーダーメイド品を少量生産する手法"
+        ],
+        "answer": 0,
+        "explanation": "ITを活用して個別要望への対応を大量生産レベルの低コスト・高効率で両立させる手法です。"
+      }
+    },
+    {
+      "id": "2-8",
+      "questionNumber": 19,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 8,
+      "title": "顧客との共同生産",
+      "page": 2,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "顧客との共同生産の説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「顧客との共同生産」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "顧客がサービスの消費者であると同時に、生産の一部にも参加すること（例：レストランでの注文、ATM操作）",
+          "顧客から製品のアイデアや新商品開発の出資を募ること",
+          "企業と顧客が共同で新しい会社を設立してサービスを運用すること",
+          "顧客にアンケート調査へ回答してもらうこと"
+        ],
+        "answer": 0,
+        "explanation": "顧客自身がサービスの受給者であると同時に、注文や操作などの生産過程に参加することです。"
+      }
+    },
+    {
+      "id": "2-9",
+      "questionNumber": 20,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 9,
+      "title": "サービスの在庫化（〇×）",
+      "page": 2,
+      "lead": "サービスの特性に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "サービスは形がないため、在庫として作り置きしておき、忙しい時に販売することができる。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）サービスは形がないため、在庫として作り置きしておき、忙しい時に販売することができる。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】サービスは非蓄積性（無形性）を持つため、作り置きして在庫保存することは不可能です。"
+      }
+    },
+    {
+      "id": "2-10",
+      "questionNumber": 21,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 10,
+      "title": "顧客の自給力との競合（〇×）",
+      "page": 2,
+      "lead": "サービスの特性に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "顧客は、自分自身でできること（料理、掃除、移動など）をあえてサービスとして購入するため、企業は「顧客の自給力」と競合している側面がある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）顧客は、自分自身でできること（料理、掃除、移動など）をあえてサービスとして購入するため、企業は「顧客の自給力」と競合している側面がある。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】顧客が自分で行う手間やスキル（自給力）とサービス購入費用・価値を比較選択しています。"
+      }
+    },
+    {
+      "id": "2-11",
+      "questionNumber": 22,
+      "chapterId": "2",
+      "chapterTitle": "サービスの特性とホスピタリティ・マネジメントの課題",
+      "chapterQuestionIndex": 11,
+      "title": "非正規社員の戦力化（〇×）",
+      "page": 2,
+      "lead": "サービスの特性に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "顧客にとって、対応するスタッフが正社員かパート・アルバイトかの区別はつかないため、非正規社員の戦力化が極めて重要である。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）顧客にとって、対応するスタッフが正社員かパート・アルバイトかの区別はつかないため、非正規社員の戦力化が極めて重要である。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】顧客から見れば雇用形態に関わらず企業の代表スタッフであるため、全員の戦力化が不可欠です。"
+      }
+    },
+
+    // --- 第3章 ---
+    {
+      "id": "3-1",
+      "questionNumber": 23,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 1,
+      "title": "コア・サービス",
+      "page": 3,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービス商品の中核をなし、対価の主たる対象となるものを（　）・サービスと呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービス商品の中核をなし、対価の主たる対象となるものを（　）・サービスと呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "コア",
+          "周辺",
+          "有形",
+          "サブ"
+        ],
+        "answer": 0,
+        "explanation": "対価の主な対象となる中核機能は「コア・サービス」です。"
+      }
+    },
+    {
+      "id": "3-2",
+      "questionNumber": 24,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 2,
+      "title": "周辺サービス",
+      "page": 3,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "コア・サービスに付随し、機能を補完したり付加価値を加えたりする要素を（　）・サービスと呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "コア・サービスに付随し、機能を補完したり付加価値を加えたりする要素を（　）・サービスと呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "周辺",
+          "コア",
+          "メイン",
+          "プロセス"
+        ],
+        "answer": 0,
+        "explanation": "付随して機能を補完・高める要素を「周辺・サービス」と呼びます。"
+      }
+    },
+    {
+      "id": "3-3",
+      "questionNumber": 25,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 3,
+      "title": "有形部分の手がかり",
+      "page": 3,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービスは無形であるため、顧客は店舗の内装や従業員の外見などの（　）部分を、品質を推定するための手がかりにする。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービスは無形であるため、顧客は店舗の内装や従業員の外見などの（　）部分を、品質を推定するための手がかりにする。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "有形",
+          "無形",
+          "抽象的",
+          "感覚的"
+        ],
+        "answer": 0,
+        "explanation": "無形なサービスの品質を推測する手がかりとして、内装や身なりなどの「有形」部分が重要になります。"
+      }
+    },
+    {
+      "id": "3-4",
+      "questionNumber": 26,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 4,
+      "title": "ドリルと穴（結果）",
+      "page": 3,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "顧客は「ドリル」というモノを買うのではなく「穴」という（　）を買うのだ、という有名なマーケティングの慣用句がある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "顧客は「ドリル」というモノを買うのではなく「穴」という（　）を買うのだ、という有名なマーケティングの慣用句がある。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "結果",
+          "過程",
+          "手段",
+          "製品"
+        ],
+        "answer": 0,
+        "explanation": "顧客が買い求めているのは商品自体ではなく、それによって実現される「結果（穴）」です。"
+      }
+    },
+    {
+      "id": "3-5",
+      "questionNumber": 27,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 5,
+      "title": "過程（プロセス）の品質",
+      "page": 3,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービス業では、目的地への輸送や料理の提供といった「結果」だけでなく、そこに至るまでの（　）の品質も重要である。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービス業では、目的地への輸送や料理の提供といった「結果」だけでなく、そこに至るまでの（　）の品質も重要である。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "過程 / プロセス",
+          "原価 / コスト",
+          "規格 / スタンダード",
+          "設備 / マシン"
+        ],
+        "answer": 0,
+        "explanation": "サービスでは目的地到着等の「結果」と並び、接客や移動中の快適さといった「過程」の品質も重要です。"
+      }
+    },
+    {
+      "id": "3-6",
+      "questionNumber": 28,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 6,
+      "title": "周辺サービスの「コア・サービス化」",
+      "page": 3,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "周辺サービスの「コア・サービス化」の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「周辺サービスのコア・サービス化」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "かつてのマイレージサービスのように、最初は特別な付加的要素だったサービスが「あって当たり前」の中核要素に変わること",
+          "コア・サービスを完全に削ぎ落として周辺サービスのみで売上を立てるビジネスモデルのこと",
+          "周辺サービスを有料オプション化して利益率を高める手法のこと",
+          "他社にはない独占的な周辺サービスを開発して特許を取得すること"
+        ],
+        "answer": 0,
+        "explanation": "マイレージのように、最初は付加価値だったものが顧客の当たり前の期待となり、中核要素化する現象です。"
+      }
+    },
+    {
+      "id": "3-7",
+      "questionNumber": 29,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 7,
+      "title": "宿泊特化型ホテル（単機能化ホテル）",
+      "page": 3,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "宿泊特化型ホテル（単機能化ホテル）の説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「宿泊特化型ホテル（単機能化ホテル）」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "レストランや宴会などの多機能を廃止し、「泊まる」という本来の機能に絞り込んで経営効率を高めたホテルのこと",
+          "長期滞在の客に限定し、客室内に厨房や洗濯機を完備したホテルのこと",
+          "宿泊機能を持たず、日帰り温泉や宴会場のみを提供する施設のこと",
+          "外国人観光客の誘致を専門として通訳スタッフを常駐させたホテルのこと"
+        ],
+        "answer": 0,
+        "explanation": "多機能を廃止し「泊まる」という本来の単一機能に絞って経営効率を高めたホテルです。"
+      }
+    },
+    {
+      "id": "3-8",
+      "questionNumber": 30,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 8,
+      "title": "サード・プレイス（第3の居場所）",
+      "page": 3,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "サード・プレイス（第3の居場所）の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「サード・プレイス（第3の居場所）」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "職場でも家庭でもない、束の間の解放感を味わえる第3の場所（スターバックスのコンセプトなど）",
+          "自宅とオフィス以外に契約するレンタル収納スペースのこと",
+          "インターネット上に存在するメタバース空間のこと",
+          "ホテルのスイートルームの別称"
+        ],
+        "answer": 0,
+        "explanation": "家庭（第1）、職場（第2）とは異なる、心地よいリラックス空間（第3の場所）を提供する考え方です。"
+      }
+    },
+    {
+      "id": "3-9",
+      "questionNumber": 31,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 9,
+      "title": "コア・サービスと満足感（〇×）",
+      "page": 3,
+      "lead": "サービス商品の構造に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "コア・サービスは、十分に提供されればされるほど、顧客は非常に大きな満足を感じるものである。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）コア・サービスは、十分に提供されればされるほど、顧客は非常に大きな満足を感じるものである。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】コア・サービスは「満たされて当たり前」と感じられやすく、不十分な時にのみ大きな不満を招く特性があります。"
+      }
+    },
+    {
+      "id": "3-10",
+      "questionNumber": 32,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 10,
+      "title": "サウスウエスト航空（〇×）",
+      "page": 3,
+      "lead": "サービス商品の構造に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "サウスウエスト航空は、機内食や座席指定などの周辺サービスをあえて削ることで、低価格と定時運行という「結果」に特化している。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）サウスウエスト航空は、機内食や座席指定などの周辺サービスをあえて削ることで、低価格と定時運行という「結果」に特化している。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】不要な周辺サービスを排除し、低価格と定時運行に集中して成功を収めました。"
+      }
+    },
+    {
+      "id": "3-11",
+      "questionNumber": 33,
+      "chapterId": "3",
+      "chapterTitle": "サービス商品の構造",
+      "chapterQuestionIndex": 11,
+      "title": "過程の価値（〇×）",
+      "page": 3,
+      "lead": "サービス商品の構造に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "旅行やテーマパークなどの商品は、移動や体験そのもの、つまり「過程」に価値がある商品の代表例である。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）旅行やテーマパークなどの商品は、移動や体験そのもの、つまり「過程」に価値がある商品の代表例である。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】単なる目的地到着等の結果だけでなく、道中や体験といった「過程」そのものが主たる商品価値です。"
+      }
+    },
+
+    // --- 第4章 ---
+    {
+      "id": "4-1",
+      "questionNumber": 34,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 1,
+      "title": "真実の瞬間（Moments of Truth）",
+      "page": 4,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "顧客が従業員と接し、その企業のサービス品質について何らかの印象を抱く接点のことを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "顧客が従業員と接し、その企業のサービス品質について何らかの印象を抱く接点のことを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "真実の瞬間 / Moments of Truth",
+          "ファースト・インプレッション",
+          "クリティカル・タッチ",
+          "サービス・ギャップ"
+        ],
+        "answer": 0,
+        "explanation": "顧客が従業員と接して印象を確定させる接点を「真実の瞬間（Moments of Truth）」と呼びます。"
+      }
+    },
+    {
+      "id": "4-2",
+      "questionNumber": 35,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 2,
+      "title": "15秒の法則",
+      "page": 4,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "元スカンジナビア航空社長のヤン・カールソンは、顧客1人あたりの接客時間はわずか（　）秒であり、その短い時間が企業の成功を左右すると説いた。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "元スカンジナビア航空社長のヤン・カールソンは、顧客1人あたりの接客時間はわずか（　）秒であり、その短い時間が企業の成功を左右すると説いた。",
+        "prompt": "最も適切な数値を一つ選びなさい。",
+        "choices": [
+          "15",
+          "30",
+          "5",
+          "60"
+        ],
+        "answer": 0,
+        "explanation": "1人あたりの平均接客時間であるわずか15秒の対応が企業の命運を決めると提唱しました。"
+      }
+    },
+    {
+      "id": "4-3",
+      "questionNumber": 36,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 3,
+      "title": "サービス・サイクル",
+      "page": 4,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "顧客が体験する一連の顧客接点の連続的なつながりのことを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "顧客が体験する一連の顧客接点の連続的なつながりのことを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "サービス・サイクル",
+          "カスタマー・チェーン",
+          "接客ルーティン",
+          "ライフサイクル"
+        ],
+        "answer": 0,
+        "explanation": "連続する接点のつながり全体を「サービス・サイクル」と呼びます。"
+      }
+    },
+    {
+      "id": "4-4",
+      "questionNumber": 37,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 4,
+      "title": "100-1=0の方程式",
+      "page": 4,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "東京ディズニーリゾートでは、100人のキャストのうち、たった（　）人の態度が悪いだけで顧客の満足はゼロになるという「100－1＝0」の方程式を大切にしている。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "東京ディズニーリゾートでは、100人のキャストのうち、たった（　）人の態度が悪いだけで顧客の満足はゼロになるという「100－1＝0」の方程式を大切にしている。",
+        "prompt": "最も適切な数値を一つ選びなさい。",
+        "choices": [
+          "1",
+          "5",
+          "10",
+          "50"
+        ],
+        "answer": 0,
+        "explanation": "たった1人の不快な対応で全体評価がゼロになるという「100-1=0」の方程式です。"
+      }
+    },
+    {
+      "id": "4-5",
+      "questionNumber": 38,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 5,
+      "title": "ギャップ分析と事前期待",
+      "page": 4,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "顧客がサービス利用前に抱いていた「（　）」と、利用した「実際の体験」の差によって品質を評価する手法をギャップ分析と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "顧客がサービス利用前に抱いていた「（　）」と、利用した「実際の体験」の差によって品質を評価する手法をギャップ分析と呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "事前期待",
+          "理想像",
+          "他社イメージ",
+          "満足感"
+        ],
+        "answer": 0,
+        "explanation": "「事前期待」と「実際の体験」の乖離・格差から満足度を評価するのがギャップ分析です。"
+      }
+    },
+    {
+      "id": "4-6",
+      "questionNumber": 39,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 6,
+      "title": "ギャップ分析（品質評価）",
+      "page": 4,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "ギャップ分析（品質評価）の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「ギャップ分析（品質評価）」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "「実際の体験」が「事前期待」を上回れば高評価、下回れば低評価になるという、顧客の主観による評価方法のこと",
+          "他社との価格やサービスの差異を数値化してグラフ化する客観的調査手法のこと",
+          "サービスを提供する従業員の能力差を測る試験のこと",
+          "商品の製造コストと販売価格の差額を評価する手法のこと"
+        ],
+        "answer": 0,
+        "explanation": "「実際の体験」と「事前期待」の差に基づき顧客の主観で評価する手法です。"
+      }
+    },
+    {
+      "id": "4-7",
+      "questionNumber": 40,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 7,
+      "title": "SERVQUAL（サーブクアル）の5項目",
+      "page": 4,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "SERVQUAL（サーブクアル）の5項目の組み合わせとして正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「SERVQUAL（サーブクアル）の5項目」に含まれる評価指標の正解セットはどれか。",
+        "prompt": "最も適切なセットを一つ選びなさい。",
+        "choices": [
+          "確実性、信頼性、有形部分、共感、対応力",
+          "価格、立地、速度、デザイン、ブランド",
+          "安全、安心、快適、持続、効率",
+          "技術、資格、経験、マナー、売上"
+        ],
+        "answer": 0,
+        "explanation": "顧客がサービス品質を測る5つの指標は「確実性・信頼性・有形部分・共感・対応力」です。"
+      }
+    },
+    {
+      "id": "4-8",
+      "questionNumber": 41,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 8,
+      "title": "事前期待のジレンマ",
+      "page": 4,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "事前期待のジレンマの説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「事前期待のジレンマ」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "宣伝などで期待を高めすぎると利用後の失望を招き、逆に期待が低すぎるとそもそも購入してもらえないという難しさ",
+          "顧客が求めるサービスレベルと従業員が提供できるレベルが常に乖離してしまうこと",
+          "新規顧客へのサービス向上を図ると既存顧客の不満が高まること",
+          "価格を引き下げるとサービスの品質が落ちてしまうこと"
+        ],
+        "answer": 0,
+        "explanation": "プロモーションでの期待値設定と購入後の実体験とのバランスを保つ難しさのことです。"
+      }
+    },
+    {
+      "id": "4-9",
+      "questionNumber": 42,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 9,
+      "title": "口コミの影響（〇×）",
+      "page": 4,
+      "lead": "サービスの品質に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "サービスには形がないため、利用体験者が発信する「口コミ」が、潜在的な顧客に大きな影響を与える。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）サービスには形がないため、利用体験者が発信する「口コミ」が、潜在的な顧客に大きな影響を与える。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】事前のお試しが難しいため、第三者の口コミが購入判断に強く影響します。"
+      }
+    },
+    {
+      "id": "4-10",
+      "questionNumber": 43,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 10,
+      "title": "不満の拡散速度（〇×）",
+      "page": 4,
+      "lead": "サービスの品質に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "統計によると、満足した顧客は5人にその体験を話すが、不満足な顧客は11人に話すと言われており、悪い評判の方が広まりやすい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）統計によると、満足した顧客は5人にその体験を話すが、不満足な顧客は11人に話すと言われており、悪い評判の方が広まりやすい。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】ネガティブな体験はポジティブな体験よりもはるかに広まりやすい性質があります。"
+      }
+    },
+    {
+      "id": "4-11",
+      "questionNumber": 44,
+      "chapterId": "4",
+      "chapterTitle": "サービスの品質",
+      "chapterQuestionIndex": 11,
+      "title": "背後システムの重要性（〇×）",
+      "page": 4,
+      "lead": "サービスの品質に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "サービスの品質は、現場の従業員だけの責任であり、目に見えない背後のシステム（調理スキルや物流など）は関係がない。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）サービスの品質は、現場の従業員だけの責任であり、目に見えない背後のシステム（調理スキルや物流など）は関係がない。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】サービス品質を決めるのは組織全体の活動であり、背後のシステム（バックステージ）も極めて重要です。"
+      }
+    },
+
+    // --- 第5章 ---
+    {
+      "id": "5-1",
+      "questionNumber": 45,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 1,
+      "title": "マーケット・セグメンテーション",
+      "page": 5,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "市場を特定のニーズを共有する集団に切り分け、ターゲットを特定することを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "市場を特定のニーズを共有する集団に切り分け、ターゲットを特定することを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "マーケット・セグメンテーション / 市場細分化",
+          "ダイレクト・マーケティング",
+          "ブランド・ポジョニング",
+          "エリア・スクリーニング"
+        ],
+        "answer": 0,
+        "explanation": "ニーズを共有する集団に市場を分けることを「マーケット・セグメンテーション」と呼びます。"
+      }
+    },
+    {
+      "id": "5-2",
+      "questionNumber": 46,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 2,
+      "title": "人口統計的と心理統計的",
+      "page": 5,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "消費者の年齢、性別、所得などで分類する方法を（　）方法、価値観やライフスタイルで分類する方法を心理統計的方法という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "消費者の年齢、性別、所得などで分類する方法を（　）方法、価値観やライフスタイルで分類する方法を心理統計的方法という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "人口統計的",
+          "地理的",
+          "行動的",
+          "主観的"
+        ],
+        "answer": 0,
+        "explanation": "年齢・性別・所得などによる分類を「人口統計的（デモグラフィック）」方法と呼びます。"
+      }
+    },
+    {
+      "id": "5-3",
+      "questionNumber": 47,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 3,
+      "title": "顧客価値の公式",
+      "page": 5,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "ジェームス・ヘスケットらが考案した「顧客価値」の公式は、「（結果）＋（過程）」を「売価＋（　）」で割ることで表される。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "ジェームス・ヘスケットらが考案した「顧客価値」の公式は、「（結果）＋（過程）」を「売価＋（　）」で割ることで表される。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "入手コスト",
+          "広告費",
+          "原価",
+          "満足感"
+        ],
+        "answer": 0,
+        "explanation": "顧客価値 ＝ (結果 ＋ 過程) ÷ (売価 ＋ 入手コスト) の公式です。"
+      }
+    },
+    {
+      "id": "5-4",
+      "questionNumber": 48,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 4,
+      "title": "パレートの法則",
+      "page": 5,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "全売上の80%は、上位20%の特定の顧客によってもたらされているという経験則を（　）の法則（80対20の法則）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "全売上の80%は、上位20%の特定の顧客によってもたらされているという経験則を（　）の法則（80対20の法則）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "パレート",
+          "ムーア",
+          "ジップ",
+          "ヘスケット"
+        ],
+        "answer": 0,
+        "explanation": "売上の8割が上位2割の顧客から生じる経験則を「パレートの法則」と呼びます。"
+      }
+    },
+    {
+      "id": "5-5",
+      "questionNumber": 49,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 5,
+      "title": "3つのR",
+      "page": 5,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "既存客を維持するための指標として、維持（Retention）、関連販売（Related Sales）、（　）の「3つのR」が重要視されている。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "既存客を維持するための指標として、維持（Retention）、関連販売（Related Sales）、（　）の「3つのR」が重要視されている。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "口コミ / Referrals",
+          "リピート / Repeat",
+          "研究 / Research",
+          "返金 / Refund"
+        ],
+        "answer": 0,
+        "explanation": "3つのRは Retention（維持）、Related Sales（関連販売）、Referrals（口コミ）です。"
+      }
+    },
+    {
+      "id": "5-6",
+      "questionNumber": 50,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 6,
+      "title": "入手コストの定義",
+      "page": 5,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "入手コストの説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「入手コスト」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "商品価格以外に、店舗へ出向くための交通費や時間、行列に並ぶ肉体的・精神的な負担などの合計のこと",
+          "製造工場から店舗までの製品配送にかかる運賃のこと",
+          "他社の顧客を獲得するために投じる割引クーポンの費用のこと",
+          "商品を購入した後に故障・破損した場合の修理費用のこと"
+        ],
+        "answer": 0,
+        "explanation": "金銭的な売価だけでなく、移動時間や行列に並ぶストレス等の合計コストを「入手コスト」と呼びます。"
+      }
+    },
+    {
+      "id": "5-7",
+      "questionNumber": 51,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 7,
+      "title": "マス・カスタマイゼーションの具体例",
+      "page": 5,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "マス・カスタマイゼーションの説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「マス・カスタマイゼーション」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "ITを活用し、個々の顧客の要望に合わせた「個別対応」を、大量生産並みの低コストと効率で実現する手法",
+          "大量生産により原価を削って全顧客に同一製品を安く販売する手法",
+          "職人が完全手作業で1点物の特注品を作る高級手法",
+          "顧客にセルフサービスを行わせる手法"
+        ],
+        "answer": 0,
+        "explanation": "ITを活用して個別の要望対応を大量生産レベルの低コスト・高効率で実現する手法です。"
+      }
+    },
+    {
+      "id": "5-8",
+      "questionNumber": 52,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 8,
+      "title": "顧客の生涯価値（LTV）",
+      "page": 5,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "顧客の生涯価値（ライフタイム・バリュー）の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「顧客の生涯価値（ライフタイム・バリュー）」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "ある顧客が一生の間に、その企業にもたらしてくれる収益の総計のこと",
+          "企業の存続期間における純利益の累計のこと",
+          "顧客が初回利用時に支払った購入金額のこと",
+          "商品の耐用年数のこと"
+        ],
+        "answer": 0,
+        "explanation": "1人の顧客が一卵の間に企業にもたらすトータル収益価値のことです。"
+      }
+    },
+    {
+      "id": "5-9",
+      "questionNumber": 53,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 9,
+      "title": "新規獲得コストと維持コスト（〇×）",
+      "page": 5,
+      "lead": "サービス商品の設計に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "新規顧客を獲得するためのコストは、既存顧客を維持するためのコストに比べて5分の1程度で済むと言われている。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）新規顧客を獲得するためのコストは、既存顧客を維持するためのコストに比べて5分の1程度で済むと言われている。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】既存客の維持コストの方が新規獲得コストよりも「5分の1」程度で安く済みます（1:5の法則）。"
+      }
+    },
+    {
+      "id": "5-10",
+      "questionNumber": 54,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 10,
+      "title": "入手コストと価格（〇×）",
+      "page": 5,
+      "lead": "サービス商品の設計に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "入手コストを大幅に下げることができれば、商品価格を引き上げる余地が生まれることもある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）入手コストを大幅に下げることができれば、商品価格を引き上げる余地が生まれることもある。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】顧客の負担するトータルコスト（売価＋入手コスト）が下がれば、売価自体を上げる余裕が生じます。"
+      }
+    },
+    {
+      "id": "5-11",
+      "questionNumber": 55,
+      "chapterId": "5",
+      "chapterTitle": "サービス商品の設計",
+      "chapterQuestionIndex": 11,
+      "title": "フルライン戦略（〇×）",
+      "page": 5,
+      "lead": "サービス商品の設計に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "星野リゾートのように、高級な「星のや」からカジュアルな「BEB」まで、あらゆる顧客層に対応する手法を「フルライン戦略」と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）星野リゾートのように、高級な「星のや」からカジュアルな「BEB」まで、あらゆる顧客層に対応する手法を「フルライン戦略」と呼ぶ。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】異なる顧客層ごとにブランドを展開し、市場全体をカバーする戦略です。"
+      }
+    },
+
+    // --- 第6章 ---
+    {
+      "id": "6-1",
+      "questionNumber": 56,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 1,
+      "title": "サービスの不可逆性",
+      "page": 6,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "サービスは、提供した瞬間に消えてしまい取り消すことができないという（　）という特性を持つため、失敗がそのまま顧客に届いてしまうリスクがある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "サービスは、提供した瞬間に消えてしまい取り消すことができないという（　）という特性を持つため、失敗がそのまま顧客に届いてしまうリスクがある。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "不可逆性",
+          "無形性",
+          "即時性",
+          "可換性"
+        ],
+        "answer": 0,
+        "explanation": "提供した失敗を取り消すことができない性質を「不可逆性」と呼びます。"
+      }
+    },
+    {
+      "id": "6-2",
+      "questionNumber": 57,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 2,
+      "title": "氷山の一角",
+      "page": 6,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "不満を感じても実際に苦情を申し立てる顧客は全体の10％以下と言われており、顕在化した苦情は「（　）の一角」にすぎない。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "不満を感じても実際に苦情を申し立てる顧客は全体の10％以下と言われており、顕在化した苦情は「（　）の一角」にすぎない。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "氷山",
+          "ピラミッド",
+          "富士山",
+          "コイン"
+        ],
+        "answer": 0,
+        "explanation": "表面化する苦情はごく一部であり「氷山の一角」にすぎません。"
+      }
+    },
+    {
+      "id": "6-3",
+      "questionNumber": 58,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 3,
+      "title": "離反顧客",
+      "page": 6,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "苦情を言わずに去ってしまう顧客を（　）顧客と呼び、企業にとっては大きな損失となる。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "苦情を言わずに去ってしまう顧客を（　）顧客と呼び、企業にとっては大きな損失となる。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "離反",
+          "休眠",
+          "潜在",
+          "流動"
+        ],
+        "answer": 0,
+        "explanation": "不満を訴えずに他社へ乗り換えてしまう顧客を「離反顧客」と呼びます。"
+      }
+    },
+    {
+      "id": "6-4",
+      "questionNumber": 59,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 4,
+      "title": "サービス・リカバリー",
+      "page": 6,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "苦情を迅速に解決すると、顧客は不満を感じる前よりも高い信頼を寄せてくれることがある。これをビジネスチャンスと捉える考え方を、サービス・（　）と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "苦情を迅速に解決すると、顧客は不満を感じる前よりも高い信頼を寄せてくれることがある。これをビジネスチャンスと捉える考え方を、サービス・（　）と呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "リカバリー / 修復",
+          "リサイクル",
+          "イノベーション",
+          "リニューアル"
+        ],
+        "answer": 0,
+        "explanation": "失敗を迅速かつ見事に修復し信頼を高める対応を「サービス・リカバリー」と呼びます。"
+      }
+    },
+    {
+      "id": "6-5",
+      "questionNumber": 60,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 5,
+      "title": "エンパワーメント",
+      "page": 6,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "現場の従業員が、上司の指示を待たずに苦情へ即座に対応できるよう、あらかじめ裁量を与えることを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "現場の従業員が、上司の指示を待たずに苦情へ即座に対応できるよう、あらかじめ裁量を与えることを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "権限委譲 / エンパワーメント",
+          "トップダウン",
+          "アウトソーシング",
+          "標準化"
+        ],
+        "answer": 0,
+        "explanation": "現場スタッフに権限・裁量を与えることを「権限委譲（エンパワーメント）」と呼びます。"
+      }
+    },
+    {
+      "id": "6-6",
+      "questionNumber": 61,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 6,
+      "title": "TARPの調査結果",
+      "page": 6,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "TARP（タープ）の調査結果の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「TARP（タープ）の調査結果」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "苦情を申し立て、それが迅速に解決された顧客の再購入率は非常に高く（82～95％）なることを示した調査",
+          "苦情対応に予算をかけても利益には貢献しないことを実証した調査",
+          "90%以上の顧客は不満があっても一切苦情を言わないことを示した調査",
+          "現場で苦情対応を行うと従業員の離職率が上がることを示した調査"
+        ],
+        "answer": 0,
+        "explanation": "苦情の迅速解決が再購入率（82〜95%）を極めて高くすることを示した調査です。"
+      }
+    },
+    {
+      "id": "6-7",
+      "questionNumber": 62,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 7,
+      "title": "象徴的賠償",
+      "page": 6,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "象徴的賠償の説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「象徴的賠償」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "金銭的な補償そのものよりも、デザートの無料提供や割引券の贈呈など「申し訳ない」という誠意を形にして示す行為",
+          "裁判で確定した損害賠償金を銀行振込で全額支払う行為",
+          "社長が顧客の自宅まで出向いて直接頭を下げること",
+          "全社的にサービスを1週間無料公開すること"
+        ],
+        "answer": 0,
+        "explanation": "金銭補償額そのものよりも、割引券やデザート提供などで誠意を形にして表す行為です。"
+      }
+    },
+    {
+      "id": "6-8",
+      "questionNumber": 63,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 8,
+      "title": "システムへの警鐘としての苦情",
+      "page": 6,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "システムへの警鐘としての苦情の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「システムへの警鐘としての苦情」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "苦情を単なるたまたま起きたミスとせず、サービス提供システムの構造的な不備を点検するための貴重な情報源と捉える考え方",
+          "苦情が発生したらただちにシステムのメインサーバーを入れ替える手続きのこと",
+          "苦情内容を全従業員に警告メールとして自動配信すること",
+          "苦情の原因となった担当者をシステムから抹消すること"
+        ],
+        "answer": 0,
+        "explanation": "苦情を組織・システムの構造的欠陥を点検改善するための貴重な情報源と捉える視点です。"
+      }
+    },
+    {
+      "id": "6-9",
+      "questionNumber": 64,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 9,
+      "title": "リカバリーにおける謝罪（〇×）",
+      "page": 6,
+      "lead": "「6段階のリカバリー・プロセス」に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "最初のステップである「謝罪」は、必ずしも自分たちの非を全面的に認めることではなく、まずは相手の緊張を和らげるために行う。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）最初のステップである「謝罪」は、必ずしも自分たちの非を全面的に認めることではなく、まずは相手の緊張を和らげるために行う。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】初期対応の謝罪は相手の不満や緊張を和らげ対話の土台を作るために行うものです。"
+      }
+    },
+    {
+      "id": "6-10",
+      "questionNumber": 65,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 10,
+      "title": "苦情対応のスピード（〇×）",
+      "page": 6,
+      "lead": "「6段階のリカバリー・プロセス」に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "苦情への対応は慎重に行う必要があるため、現場判断で即答するよりも、一度持ち帰って上司の指示を仰ぐのが最も効果的である。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）苦情への対応は慎重に行う必要があるため、現場判断で即答するよりも、一度持ち帰って上司の指示を仰ぐのが最も効果的である。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】迅速な解決が再購入率を高めるため、現場での即時対応（エンパワーメント）が最も推奨されます。"
+      }
+    },
+    {
+      "id": "6-11",
+      "questionNumber": 66,
+      "chapterId": "6",
+      "chapterTitle": "サービス提供システム（サービスの失敗と修復）",
+      "chapterQuestionIndex": 11,
+      "title": "フォローアップの重要性（〇×）",
+      "page": 6,
+      "lead": "「6段階のリカバリー・プロセス」に関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "最後のステップである「フォローアップ」は、後日、問題が再発していないか確認するなど、顧客を大切に思っている意思を伝えるために重要である。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）最後のステップである「フォローアップ」は、後日、問題が再発していないか確認するなど、顧客を大切に思っている意思を伝えるために重要である。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】後日の問題再発確認やアフターフォローにより顧客との信頼がより強固になります。"
+      }
+    },
+
+    // --- 第7章 ---
+    {
+      "id": "7-1",
+      "questionNumber": 67,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 1,
+      "title": "非定型業務の判断基準",
+      "page": 7,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "マニュアルでは対応できない非定型業務において、従業員が「いかに行動すべきか」を判断する基準となる共有された理念や価値観を（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "マニュアルでは対応できない非定型業務において、従業員が「いかに行動すべきか」を判断する基準となる共有された理念や価値観を（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "組織文化 / 企業文化",
+          "業務マニュアル",
+          "社内規程",
+          "顧客憲章"
+        ],
+        "answer": 0,
+        "explanation": "共有された理念や価値観が行動基準となるものを「組織文化 / 企業文化」と呼びます。"
+      }
+    },
+    {
+      "id": "7-2",
+      "questionNumber": 68,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 2,
+      "title": "逆さまのピラミッド",
+      "page": 7,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "現場従業員を頂点に置き、経営者や管理者が彼らを支援する側へ回る組織構造を（　）と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "現場従業員を頂点に置き、経営者や管理者が彼らを支援する側へ回る組織構造を（　）と呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "逆さまのピラミッド",
+          "フラット型組織",
+          "マトリクス組織",
+          "中央集権型ピラミッド"
+        ],
+        "answer": 0,
+        "explanation": "現場をトップに置き管理層がサポートする顧客志向の組織構造を「逆さまのピラミッド」と呼びます。"
+      }
+    },
+    {
+      "id": "7-3",
+      "questionNumber": 69,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 3,
+      "title": "従業員満足（ES）",
+      "page": 7,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "従業員が自らの仕事に対して感じる満足感のことを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "従業員が自らの仕事に対して感じる満足感のことを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "従業員満足 / ES",
+          "顧客満足 / CS",
+          "品質管理 / QC",
+          "企業評価 / EV"
+        ],
+        "answer": 0,
+        "explanation": "従業員満足（Employee Satisfaction）の略称は「ES」です。"
+      }
+    },
+    {
+      "id": "7-4",
+      "questionNumber": 70,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 4,
+      "title": "サティスファクション・ミラー",
+      "page": 7,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "従業員満足と顧客満足が、鏡面のように反射し合って互いに高め合う相互作用のことを（　）と呼ぶ。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "従業員満足と顧客満足が、鏡面のように反射し合って互いに高め合う相互作用のことを（　）と呼ぶ。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "サティスファクション・ミラー",
+          "シナジー・エフェクト",
+          "フィードバック・ループ",
+          "リフレクション・チェーン"
+        ],
+        "answer": 0,
+        "explanation": "ESとCSが互いに反射し合って高まり合う相互関係を「サティスファクション・ミラー」と呼びます。"
+      }
+    },
+    {
+      "id": "7-5",
+      "questionNumber": 71,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 5,
+      "title": "サービス・プロフィット・チェーン",
+      "page": 7,
+      "lead": "次の（　）にあてはまる適切な語句を答えなさい。",
+      "basic": "「社内サービスの質」が「従業員満足」を高め、それが「顧客満足」や「企業収益」へと循環していくモデルを（　）という。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "「社内サービスの質」が「従業員満足」を高め、それが「顧客満足」や「企業収益」へと循環していくモデルを（　）という。",
+        "prompt": "最も適切な語句を一つ選びなさい。",
+        "choices": [
+          "サービス・プロフィット・チェーン / SPC",
+          "サプライチェーン・マネジメント",
+          "バリューチェーン・モデル",
+          "サステナビリティ・ループ"
+        ],
+        "answer": 0,
+        "explanation": "社内品質→ES→CS→収益の循環構造を「サービス・プロフィット・チェーン（SPC）」と呼びます。"
+      }
+    },
+    {
+      "id": "7-6",
+      "questionNumber": 72,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 6,
+      "title": "目に見えるマネジメント",
+      "page": 7,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "目に見えるマネジメント（Visible Management）の説明として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「目に見えるマネジメント（Visible Management）」の説明として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "経営者自らが理念を象徴するような行動を、従業員の目に触れる形で実践し、手本を示すこと",
+          "社内に監視カメラを設置して作業手順を常時チェックすること",
+          "売上グラフを社内モニターに掲示してプレッシャーを与えること",
+          "マニュアルをすべて大きなイラスト入りで印刷すること"
+        ],
+        "answer": 0,
+        "explanation": "経営陣自らが理念を象徴する行動を従業員の前で示し手本となるマネジメントです。"
+      }
+    },
+    {
+      "id": "7-7",
+      "questionNumber": 73,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 7,
+      "title": "QWL（職業生活の質）",
+      "page": 7,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "QWL（職業生活の質）の説明として最も適切なものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「QWL（職業生活の質）」の説明として最も適切なものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "賃金や労働時間だけでなく、仕事のやりがいや教育訓練、人間関係などを含めた職場環境の品質のこと",
+          "従業員個人の家庭生活やプライベートの充実度のこと",
+          "工場の最新設備機器の性能レベルのこと",
+          "退職金の支給額水準のこと"
+        ],
+        "answer": 0,
+        "explanation": "給与だけでなく仕事のやりがいや人間関係等を含めた職場環境全般の品質のことです。"
+      }
+    },
+    {
+      "id": "7-8",
+      "questionNumber": 74,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 8,
+      "title": "採用における「価値観」の重視",
+      "page": 7,
+      "lead": "次の用語について、レジュメの説明に基づき簡潔に説明しなさい。",
+      "basic": "採用における「価値観」の重視の考え方として正しいものを一つ選びなさい。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "【用語説明】「採用における価値観の重視」の考え方として正しいものはどれか。",
+        "prompt": "最も適切な説明を一つ選びなさい。",
+        "choices": [
+          "技能は訓練で習得できるが人格や価値観は変えにくいため、採用時には企業の文化に共鳴できるかを重視すべきという考え方",
+          "技能や資格を最優先し性格や価値観は考慮しないという考え方",
+          "新入社員教育にかかる費用を削減するために実務経験のみを重視する考え方",
+          "経営者の個人の好みに合うかどう者だけを採用する考え方"
+        ],
+        "answer": 0,
+        "explanation": "スキルは後から習得できるが価値観は変えにくいため、採用時に文化共鳴を重視する考え方です。"
+      }
+    },
+    {
+      "id": "7-9",
+      "questionNumber": 75,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 9,
+      "title": "バックステージ従業員の意識（〇×）",
+      "page": 7,
+      "lead": "組織とSPCに関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "顧客志向の組織では、バックステージ（内勤）の従業員は、直接顧客と接しないため「サービスを提供している」という意識を持つ必要はない。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）顧客志向の組織では、バックステージ（内勤）の従業員は、直接顧客と接しないため「サービスを提供している」という意識を持つ必要はない。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 1,
+        "explanation": "【誤り】全員がフロントの社員を顧客（社内顧客）として支援する立場にあり、サービス提供意識が重要です。"
+      }
+    },
+    {
+      "id": "7-10",
+      "questionNumber": 76,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 10,
+      "title": "顧客ロイヤリティ（〇×）",
+      "page": 7,
+      "lead": "組織とSPCに関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "顧客ロイヤリティ（愛着）が高まると、リピート利用だけでなく、口コミによる新規客の創造や関連商品の購入にもつながる。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）顧客ロイヤリティ（愛着）が高まると、リピート利用だけでなく、口コミによる新規客の創造や関連商品の購入にもつながる。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】高いロイヤリティはリピート利用のみならず、ポジティブな推奨活動や関連購入に寄与します。"
+      }
+    },
+    {
+      "id": "7-11",
+      "questionNumber": 77,
+      "chapterId": "7",
+      "chapterTitle": "顧客志向の文化と組織",
+      "chapterQuestionIndex": 11,
+      "title": "従業員の定着率（〇×）",
+      "page": 7,
+      "lead": "組織とSPCに関する次の記述のうち、正しいものには〇、誤っているものには×をつけなさい。",
+      "basic": "従業員の定着率（離職率の低さ）は、サービスの生産性や品質、ひいては顧客満足度と正の相関がある。",
+      "quizTotal": 11,
+      "quiz": {
+        "q": "（記述判定）従業員の定着率（離職率の低さ）は、サービスの生産性や品質、ひいては顧客満足度と正の相関がある。",
+        "prompt": "この記述の正誤を選択しなさい。",
+        "choices": [
+          "正しい（〇）",
+          "誤り（×）"
+        ],
+        "answer": 0,
+        "explanation": "【正しい】熟練スタッフの定着がサービスの品質向上や生産性維持をもたらし、満足度を高めます。"
+      }
+    }
+  ]
+};
+
+
+window.TEXTBOOK_DATA = {
+  units: {
+    "1": [
+      {
+        id: "1-1",
+        title: "ホスピタリティとサービスの基本概念",
+        summary: "古代ラテン語hospesに由来するホスピタリティの語源、機能的サービスとコマーシャル・ホスピタリティの違い、コア・サービスについて学習します。",
+        points: [
+          "語源: 古代ラテン語hospes（旅人を遇する宿主）に由来",
+          "清水滋氏の定義: 「仕事（業務）そのもの」＝機能的サービス",
+          "コマーシャル・ホスピタリティ: 企業がサービス価値の一部として設計した心遣い",
+          "コア・サービス: サービス商品の中核となる機能（例: 航空機の目的地までの輸送）"
+        ],
+        caution: "機能的サービスとコマーシャル・ホスピタリティ、コア・サービスと周辺サービスの概念の違いを区別することが大切です。",
+        exam: "ホスピタリティの語源（hospes / hospital）や、清水滋氏のサービス定義、コア・サービスの定義が穴埋め問題で頻出します。"
+      },
+      {
+        id: "1-2",
+        title: "周辺サービスとプロセスの品質",
+        summary: "コア・サービスを補完する周辺サービス、結果だけでなく過程（プロセス）も重視する視点、ホスピタリティ・マネジメントの三角形を理解します。",
+        points: [
+          "周辺サービス: コア・サービスを支援・補完し付加価値を加える要素（予約、手荷物処理等）",
+          "結果とプロセス: 「目的地に着く（結果）」だけでなく「接客の丁寧さ・居心地（プロセス）」も重要",
+          "ホスピタリティ・マネジメントの三角形: 経営者・顧客・従業員の3者の相互関係を有機的に結ぶ"
+        ],
+        caution: "サービスは結果だけでなく「プロセス」の品質も評価される点に注意しましょう。",
+        exam: "「周辺サービス」の具体例や、「ホスピタリティ・マネジメントの三角形」を構成する3者（経営者・顧客・従業員）が出題されます。"
+      },
+      {
+        id: "1-3",
+        title: "顧客満足（CS）の特性と不満の拡散力",
+        summary: "無形性による口コミの重要性、満足顧客と不満足顧客の拡散力（5人vs11人）、コア・サービスの満たされ方を学習します。",
+        points: [
+          "口コミの重視: サービスは無形のため事前の接触確認ができず、口コミが重視される",
+          "不満の拡散力: 満足客は5人に話すが、不満足客は11人に話す（不満の拡散力が大きい）",
+          "コア・サービスの特性: 十分提供されても「当たり前」と感じられ、満足感向上には繋がりにくい"
+        ],
+        caution: "無形であるため事前体験・手触りでの確認は不可能です。口コミ頼みになる構造を押さえましょう。",
+        exam: "「事前に触って確認した結果を重視する」という誤り記述や、口コミの波及効果についての〇×問題が多発します。"
+      }
+    ],
+    "2": [
+      {
+        id: "2-1",
+        title: "サービスの特性（無形性・不可逆性・立地・時間的偏在）",
+        summary: "サービスの主な特性（無形性、不可逆性、立地依存、チェーン・オペレーション、時間的偏在）を整理します。",
+        points: [
+          "無形性: 事前確認不可のため口コミを参考にする",
+          "不可逆性: 生産と消費が同時のため事前の検品ができず、失敗を取り返せない",
+          "立地: 受身のビジネスのため出店場所（立地）が成否を左右する",
+          "チェーン・オペレーション: 本部に仕入れ加工を集中し同一規格店舗を多数展開",
+          "時間的偏在: 特定時間に需要が集中。在庫不可のため平準化が課題"
+        ],
+        caution: "製造業との違い（検品不可＝不可逆性、在庫不可＝非蓄積性）を明確にしましょう。",
+        exam: "不可逆性、立地、チェーン・オペレーション、時間的偏在の各用語が穴埋めでよく問われます。"
+      },
+      {
+        id: "2-2",
+        title: "サービスの運営課題と顧客の役割",
+        summary: "品質のバラツキ、マス・カスタマイゼーション、顧客との共同生産について学びます。",
+        points: [
+          "品質のバラツキ: 「人」が主体の生産のため体調や精神状況により品質が不均一になる",
+          "マス・カスタマイゼーション: ITを活用し個別の要望対応を大量生産並みの効率と低コストで実現",
+          "顧客との共同生産: 顧客が消費者であると同時に生産の一部に参加（例: レストラン注文、ATM操作）"
+        ],
+        caution: "顧客自身も生産に参加している（共同生産）という概念はサービス固有の視点です。",
+        exam: "「マス・カスタマイゼーション」や「顧客との共同生産」の意味を問う記述選択問題が出題されます。"
+      },
+      {
+        id: "2-3",
+        title: "サービスの誤解と自給力・非正規社員の重要性",
+        summary: "サービスは在庫化できないこと、顧客の自給力との競合、非正規社員の戦力化について学びます。",
+        points: [
+          "在庫不可: サービスは形がないため在庫として作り置きできない（×作り置きできる）",
+          "顧客の自給力: 料理や掃除等、自分でできることをあえてサービスとして買うため「自給力」と競合する",
+          "非正規社員の戦力化: 顧客から見れば正社員もパート・アルバイトも区別がつかないため重要"
+        ],
+        caution: "「形がないため忙しい時のために作り置きできる」は典型的な誤り肢です。",
+        exam: "在庫の可否、顧客の自給力との競合、アルバイト等の非正規社員の重要性に関する〇×判定が出題されます。"
+      }
+    ],
+    "3": [
+      {
+        id: "3-1",
+        title: "サービス商品の構造（コア・周辺・有形部分・プロセス）",
+        summary: "コア・サービス、周辺サービス、有形部分、ドリルと穴（結果）、過程（プロセス）の価値について理解します。",
+        points: [
+          "コア・サービス: 対価の主たる対象となる中核機能",
+          "周辺サービス: コアに付随し機能を補完・付加価値向上させる要素",
+          "有形部分: 無形サービスを推測する手がかり（店舗内装、従業員の外見など）",
+          "結果と過程: 顧客が買うのは「ドリル」ではなく「穴（結果）」。「過程（プロセス）」の品質も重要"
+        ],
+        caution: "顧客はモノ自体ではなく、それによって得られる「結果（穴）」を購入しているという比喩を押さえましょう。",
+        exam: "有形部分の役割や、「ドリルではなく穴（結果）を買う」という慣用句の空欄補充が頻出です。"
+      },
+      {
+        id: "3-2",
+        title: "サービス商品の発展形態（単機能化・サードプレイス）",
+        summary: "周辺サービスのコア・サービス化、宿泊特化型ホテル、サード・プレイス（第3の居場所）を解説します。",
+        points: [
+          "コア・サービス化: かつて付加的だったマイレージ等が「あって当たり前」に変化すること",
+          "宿泊特化型ホテル: 宴会やレストラン等を廃止し「泊まる」機能に絞り込み高効率化",
+          "サード・プレイス: 職場でも家庭でもない解放感を味わえる第3の場所（スターバックス等）"
+        ],
+        caution: "単機能化（宿泊特化など）と高付加価値化（サードプレイスなど）の双方向の戦略を整理しましょう。",
+        exam: "スターバックスの「サード・プレイス」や周辺サービスのコア・サービス化現象が問われます。"
+      },
+      {
+        id: "3-3",
+        title: "サービス構造の事例（サウスウエスト航空・体験価値）",
+        summary: "コアサービスの性質、サウスウエスト航空の周辺サービス削減、過程そのものに価値がある商品を学びます。",
+        points: [
+          "コアサービスの限界: 十分提供されても「当たり前」とされ、過剰な満足には直結しない",
+          "サウスウエスト航空: 機内食や座席指定を削り、低価格・定時運行という「結果」に特化",
+          "過程の価値: 旅行やテーマパークは移動や体験そのもの（過程）に価値がある代表例"
+        ],
+        caution: "コア・サービスは提供すればするほど大満足を得られるわけではない点に注意が必要です。",
+        exam: "コアサービスは「提供するほど非常に大きな満足を感じる」という誤り問題によく出ます。"
+      }
+    ],
+    "4": [
+      {
+        id: "4-1",
+        title: "サービス品質と真実の瞬間（Moments of Truth）",
+        summary: "真実の瞬間、15秒の接客（ヤン・カールソン）、サービス・サイクル、100-1=0の方程式、ギャップ分析を学習します。",
+        points: [
+          "真実の瞬間: 顧客が従業員と接し印象を抱く接点（Moments of Truth）",
+          "15秒の法則: スカンジナビア航空社長ヤン・カールソンが提唱した接客時間",
+          "サービス・サイクル: 一連の顧客接点の連続的なつながり",
+          "100-1=0の方程式: ディズニーリゾートが大切にする「1人の悪印象で全満足がゼロになる」考え方",
+          "ギャップ分析: 「事前期待」と「実際の体験」の差で品質を評価する手法"
+        ],
+        caution: "15秒、100-1=0、事前期待と体験のギャップなど、数値を伴う用語を正確に覚えましょう。",
+        exam: "ヤン・カールソンの15秒、ディズニーの「100-1=0」、事前期待と実際の体験による「ギャップ分析」が必出です。"
+      },
+      {
+        id: "4-2",
+        title: "品質評価の指標と事前期待のジレンマ",
+        summary: "ギャップ分析の詳細、SERVQUALの5項目、事前期待のジレンマを理解します。",
+        points: [
+          "ギャップ分析: 実際の体験が事前期待を上回れば高評価、下回れば低評価となる主観的評価",
+          "SERVQUALの5項目: 確実性、信頼性、有形部分、共感、対応力",
+          "事前期待のジレンマ: 宣伝で期待を上げすぎると失望され、下げすぎると購入されない難しさ"
+        ],
+        caution: "SERVQUALの5つの指標（確実性・信頼性・有形部分・共感・対応力）の名称を覚えましょう。",
+        exam: "SERVQUALの5項目や事前期待のジレンマの意味を選択する問題が出題されます。"
+      },
+      {
+        id: "4-3",
+        title: "口コミの拡散と裏方（バックステージ）の重要性",
+        summary: "口コミが潜在顧客に与える影響、不満の拡散、組織全体・バックシステムの重要性を学びます。",
+        points: [
+          "口コミの影響: 無形性ゆえに利用体験者の「口コミ」が潜在顧客に絶大な影響を与える",
+          "拡散の偏り: 満足した客は5人、不満足な客は11人に話し、悪い評判が広まりやすい",
+          "組織・背後のシステム: サービス品質は現場の従業員だけでなく、調理や物流など背後のシステムも不可欠"
+        ],
+        caution: "「現場の従業員だけが品質の責任者で背後システムは関係ない」は誤りです。",
+        exam: "「サービス品質は現場の従業員だけの責任である」という誤記述判定がよく問われます。"
+      }
+    ],
+    "5": [
+      {
+        id: "5-1",
+        title: "マーケット・セグメンテーションと顧客価値の公式",
+        summary: "市場細分化、人口統計的・心理統計的方法、顧客価値の公式、パレートの法則、3つのRを学びます。",
+        points: [
+          "マーケット・セグメンテーション: ニーズ共有集団に切り分けターゲットを特定",
+          "人口統計的/心理統計的: 年齢・性別は人口統計的、価値観・ライフスタイルは心理統計的",
+          "顧客価値の公式: (結果 + 過程) ÷ (売価 + 入手コスト)",
+          "パレートの法則: 売上の80%は上位20%の特定顧客からもたらされる（80対20の法則）",
+          "3つのR: 既存客維持の指標「Retention（維持）」「Related Sales（関連販売）」「Referrals（口コミ）」"
+        ],
+        caution: "顧客価値の公式の分母（売価＋入手コスト）と分子（結果＋過程）の関係を暗記しましょう。",
+        exam: "顧客価値の公式の空欄補充や、パレートの法則（80:20）、3つのRが出題されます。"
+      },
+      {
+        id: "5-2",
+        title: "入手コスト・マス・カスタマイゼーション・LTV",
+        summary: "入手コストの内訳、ダイナミック・パッケージ、顧客の生涯価値（LTV）を学びます。",
+        points: [
+          "入手コスト: 交通費、移動時間、行列に並ぶ肉体的・精神的負担の合計",
+          "マス・カスタマイゼーション: ITを活用し個別の要望に合わせた対応を低コスト・高効率で実現",
+          "顧客の生涯価値（LTV）: 一人の顧客が一生の間に企業にもたらす収益の総計"
+        ],
+        caution: "入手コストは金銭だけでなく「時間」や「精神的負担」も含まれます。",
+        exam: "入手コストの定義や、LTV（ライフタイム・バリュー）の意味を選択する問題が出ます。"
+      },
+      {
+        id: "5-3",
+        title: "既存客維持コスト（1:5の法則）とフルライン戦略",
+        summary: "新規獲得と既存維持のコスト比較（1:5）、入手コスト削減による価格引き上げ、フルライン戦略を解説します。",
+        points: [
+          "維持コストの安さ: 既存客を維持するコストは新規獲得コストの5分の1程度で済む（×新規の方が5分の1で済む）",
+          "入手コスト軽減効果: 入手コストを大幅に下げれば、その分商品価格を引き上げる余地が生まれる",
+          "フルライン戦略: 星野リゾートの「星のや」から「BEB」まで、全顧客層に対応する手法"
+        ],
+        caution: "新規顧客獲得コストは既存維持コストの「5倍」かかる（既存維持は新規の1/5）点に注意！",
+        exam: "「新規獲得コストは既存維持コストの5分の1で済む」という誤り肢のひっかけ問題が頻出です。"
+      }
+    ],
+    "6": [
+      {
+        id: "6-1",
+        title: "サービスの失敗とリカバリー・エンパワーメント",
+        summary: "不可逆性、氷山の一角、離反顧客、サービス・リカバリー、権限委譲（エンパワーメント）を学びます。",
+        points: [
+          "不可逆性: 失敗したサービスが取り消せずそのまま届くリスク",
+          "氷山の一角: 苦情を申立てる客は10%以下で、顕在苦情は一部に過ぎない",
+          "離反顧客: 黙って去ってしまう顧客（大きな損失となる）",
+          "サービス・リカバリー: 迅速な解決で信頼を深める機会（リカバリー/修復）",
+          "エンパワーメント: 現場スタッフが上司の指示を待たずに苦情対応できるよう裁量を与える"
+        ],
+        caution: "苦情を言わずに去る「離反顧客」の防止と現場の「エンパワーメント」がポイントです。",
+        exam: "氷山の一角、離反顧客、サービス・リカバリー、エンパワーメントの空欄問題が多発します。"
+      },
+      {
+        id: "6-2",
+        title: "TARPの調査・象徴的賠償・システムへの警鐘",
+        summary: "TARP調査結果（再購入率82〜95%）、象徴的賠償、苦情を構造的不備への警鐘と捉える考え方を整理します。",
+        points: [
+          "TARP調査: 苦情が迅速解決された客の再購入率は82〜95%と非常に高くなる",
+          "象徴的賠償: 金銭補償だけでなく、デザート提供や割引券等で誠意を形にして示す行為",
+          "システムへの警鐘: 苦情を「偶然のミス」とせず、システム構造の不備を点検する機会と捉える"
+        ],
+        caution: "象徴的賠償は金銭そのものではなく「誠意を形にする行為」である点に注目しましょう。",
+        exam: "TARPの再購入率数値や象徴的賠償の意味が問われます。"
+      },
+      {
+        id: "6-3",
+        title: "6段階のリカバリー・プロセスと即時対応",
+        summary: "謝罪の役割、現場即時対応の重要性、フォローアップの目的を学習します。",
+        points: [
+          "謝罪の役割: 非を全面的に認めることではなく、相手の緊張や怒りを和らげるために最初に行う",
+          "即時対応の推進: 上司に持ち帰るより、現場判断で即答・即時対応する方が再購入率を劇的に高める",
+          "フォローアップ: 後日再発確認などを通じて顧客を大切に思う意思を伝える重要な最終段階"
+        ],
+        caution: "「現場で即答せず一度持ち帰って上司の指示を仰ぐのが最も効果的」は誤りです！",
+        exam: "「苦情対応は慎重を期すため上司に持ち帰るのが最も効果的である」という誤り肢がよく出ます。"
+      }
+    ],
+    "7": [
+      {
+        id: "7-1",
+        title: "組織文化・逆さまのピラミッド・SPC",
+        summary: "組織文化/企業文化、逆さまのピラミッド、従業員満足（ES）、サティスファクション・ミラー、SPCを解説します。",
+        points: [
+          "組織文化/企業文化: マニュアル外の非定型業務で行動判断基準となる共有理念",
+          "逆さまのピラミッド: 現場従業員を頂点とし、経営者・管理者が支援に回る組織構造",
+          "従業員満足（ES）: 従業員が自身の仕事に対して感じる満足感",
+          "サティスファクション・ミラー: 従業員満足と顧客満足が互いに鏡のように反射し高め合う",
+          "サービス・プロフィット・チェーン（SPC）: 社内サービス品質→ES→CS→企業収益へと循環するモデル"
+        ],
+        caution: "逆さまのピラミッドやサティスファクション・ミラー、SPCの略称と意味をリンクさせましょう。",
+        exam: "組織文化、逆さまのピラミッド、サティスファクション・ミラー、SPCが穴埋めで出題されます。"
+      },
+      {
+        id: "7-2",
+        title: "目に見えるマネジメント・QWL・価値観重視の採用",
+        summary: "Visible Management、QWL（職業生活の質）、採用時の価値観重視について学びます。",
+        points: [
+          "目に見えるマネジメント: 経営者自らが理念を象徴する行動を実践し手本を示す",
+          "QWL（職業生活の質）: 賃金・時間だけでなく、やりがい、教育、人間関係を含めた職場環境の品質",
+          "価値観の重視: 技能は訓練で習得できるが人格・価値観は変えにくいため、採用時に文化共鳴を重視"
+        ],
+        caution: "QWLは単なる給与額だけでなく、人間関係ややりがいも含めた品質です。",
+        exam: "QWLの定義や採用における価値観重視の考え方が選択問題で出ます。"
+      },
+      {
+        id: "7-3",
+        title: "社内顧客意識・顧客ロイヤリティ・定着率",
+        summary: "バックステージの社内顧客意識、顧客ロイヤリティの波及効果、定着率とサービス品質の正の相関を学習します。",
+        points: [
+          "社内顧客: バックステージ（内勤）もフロントを支援する「社内顧客」意識を持つ必要がある",
+          "顧客ロイヤリティ: 愛着が高まるとリピート購入、口コミ新規客創造、関連商品購入へつながる",
+          "定着率と正の相関: 従業員の定着率（低離職率）は生産性・品質・顧客満足度と正の相関関係がある"
+        ],
+        caution: "「内勤従業員は顧客と接しないためサービス提供意識を持つ必要はない」は誤りです！",
+        exam: "「バックステージの従業員はサービス提供の意識を持つ必要はない」という誤り肢が頻出です。"
+      }
+    ]
+  },
+  modalContent: {
+    "1-1": {
+      body: [
+        "ホスピタリティという言葉は、古代ラテン語で「旅人を遇する宿主」を意味する hospes（ホスペス）に由来します。同じ語源として hotel のほかに hospital（病院）が挙げられます。",
+        "清水滋氏は、サービス業におけるサービスを「接客態度」ではなく「仕事（業務）そのもの」と定義し、これを『機能的サービス』と呼びました。また、企業が意図的に設計した心遣いを『コマーシャル・ホスピタリティ』と呼びます。"
+      ],
+      terms: [
+        ["hospes（ホスペス）", "「旅人を遇する宿主」を意味する古代ラテン語。ホスピタリティの語源。"],
+        ["機能的サービス", "接客マナーではなく、仕事（業務）そのものの機能的な提供。"],
+        ["コア・サービス", "サービス商品の中核となる機能（例: 航空機の目的地への輸送）。"]
+      ],
+      checks: [
+        "ホスピタリティの語源は古代ラテン語の hospes である。",
+        "清水滋氏は業務そのものを「機能的サービス」と定義した。",
+        "中核機能を「コア・サービス」、付加的要素を「周辺サービス」と呼ぶ。"
+      ]
+    },
+    "1-2": {
+      body: [
+        "周辺サービスは、コア・サービスの機能を支援・補完したり付加価値を加えたりする要素です。",
+        "サービスには「目的地に着く」という結果だけでなく、そこに至る「接客の丁寧さ」「環境の心地よさ」といったプロセス（過程）の品質も重要です。"
+      ],
+      terms: [
+        ["周辺サービス", "コアサービスを補完し付加価値を加える（予約、チェックイン等）。"],
+        ["ホスピタリティ・マネジメントの三角形", "経営者・顧客・従業員の3者の相互関係を結ぶフレームワーク。"]
+      ],
+      checks: [
+        "サービスは結果だけでなくプロセスの品質も評価される。",
+        "ホスピタリティ・マネジメントの三角形は経営者・顧客・従業員の3者で構成される。"
+      ]
+    },
+    "1-3": {
+      body: [
+        "サービス商品は無形であるため、事前の手触り確認ができず、口コミ依存度が高くなります。",
+        "調査データによると、満足顧客は5人に伝えますが、不満足顧客は11人に伝えるとされ、不満の拡散力は非常に大きいです。"
+      ],
+      terms: [
+        ["口コミの拡散力", "満足客5人に対し、不満足客は11人に話すという統計。"],
+        ["コア・サービスの評価限界", "コア・サービスは満たされて当たり前と感じられやすい。"]
+      ],
+      checks: [
+        "サービスは事前に触って確認できないため口コミが重視される。",
+        "コア・サービスは十分に提供されても満足感の向上には繋がりにくい。"
+      ]
+    }
+  }
+};
+
+
+const data = window.QUIZ_DATA || window.MORNING_DATA || { chapters: [], questions: [], curriculum: {} };
+const textbookData = window.TEXTBOOK_DATA || { units: {}, modalContent: {} };
+
+const chapterCatalog = [
+  { id: "1", title: "ホスピタリティ・マネジメントのフレームワーク", pages: 3, overview: "語源（hospes）、機能的サービス、コマーシャル・ホスピタリティ、コア・サービス、周辺サービス、結果とプロセスなどを学びます。" },
+  { id: "2", title: "サービスの特性とホスピタリティ・マネジメントの課題", pages: 3, overview: "無形性、不可逆性、立地依存、チェーン・オペレーション、時間的偏在、品質のバラツキ、マス・カスタマイゼーション、顧客との共同生産を学習します。" },
+  { id: "3", title: "サービス商品の構造", pages: 3, overview: "コア・サービス、周辺サービス、有形部分、ドリルと穴（結果）、単機能化ホテル、サード・プレイス、体験価値を整理します。" },
+  { id: "4", title: "サービスの品質", pages: 3, overview: "真実の瞬間（Moments of Truth）、ヤン・カールソンの15秒、ディズニーの100-1=0、ギャップ分析、SERVQUALの5項目、事前期待のジレンマ、口コミ、バックシステムを学びます。" },
+  { id: "5", title: "サービス商品の設計", pages: 3, overview: "マーケット・セグメンテーション、人口・心理統計的方法、顧客価値の公式、パレートの法則（80:20）、3つのR、入手コスト、LTV、フルライン戦略を学習します。" },
+  { id: "6", title: "サービス提供システム（サービスの失敗と修復）", pages: 3, overview: "不可逆性、氷山の一角、離反顧客、サービス・リカバリー、エンパワーメント、TARPの調査結果、象徴的賠償、リカバリー・プロセスを学びます。" },
+  { id: "7", title: "顧客志向の文化と組織", pages: 3, overview: "組織文化、逆さまのピラミッド、従業員満足（ES）、サティスファクション・ミラー、サービス・プロフィット・チェーン（SPC）、QWL、社内顧客意識、定着率を整理します。" },
+];
+
+const sourceChapters = new Map((data.chapters || []).map((chapter) => [String(chapter.id), chapter]));
+const chapterIds = [...new Set([
+  ...chapterCatalog.map((chapter) => String(chapter.id)),
+  ...Object.keys(textbookData.units || {}),
+  ...(data.chapters || []).map((chapter) => String(chapter.id)),
+])];
+const chapters = chapterIds.map((id) => {
+  const fallback = chapterCatalog.find((chapter) => chapter.id === id) || { id, title: `第${id}章`, pages: 0, overview: "" };
+  const source = sourceChapters.get(id);
+  return {
+    ...fallback,
+    ...(source || {}),
+    id,
+    pages: source?.pages ?? fallback.pages ?? (textbookData.units?.[id]?.length || 0),
+    questionCount: source?.questionCount || 0,
+  };
+});
+
+function shuffleQuestionChoices(item) {
+  if (item.quiz && Array.isArray(item.quiz.choices) && item.quiz.choices.length > 2) {
+    const correctText = item.quiz.choices[item.quiz.answer];
+    const shuffled = [...item.quiz.choices];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    item.quiz.choices = shuffled;
+    item.quiz.answer = shuffled.indexOf(correctText);
+  }
+  return item;
+}
+
+const questions = (data.questions || []).map((item) => shuffleQuestionChoices({ ...item, chapterId: String(item.chapterId) }));
+
+const textbookUnits = textbookData.units || {};
+const textLessons = Object.entries(textbookUnits).flatMap(([chapterId, units]) => units.map((unit, index) => ({ ...unit, chapterId, unitIndex: index + 1 })));
+const firstTextLessonId = textLessons[0]?.id || "1-1";
+const firstQuestionId = questions[0]?.id || "1-1";
+const textbookModalContent = textbookData.modalContent || {};
+
+const storedLessonId = localStorage.getItem("lessonId");
+const storedQuestionId = localStorage.getItem("questionId") || localStorage.getItem("quizLessonId");
+const storedChapterId = localStorage.getItem("chapterId");
+const storedQuizLessonId = localStorage.getItem("quizLessonId");
+const storedBookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+const storedReadLessons = JSON.parse(localStorage.getItem("readLessons") || "[]");
+const storedReadLessonHistory = JSON.parse(localStorage.getItem("readLessonHistory") || "{}");
+const storedAnswerHistory = JSON.parse(localStorage.getItem("answerHistory") || "{}");
+const storedProfile = JSON.parse(localStorage.getItem("profile") || "{}");
+
+const state = {
+  view: localStorage.getItem("view") || "home",
+  lessonId: textLessons.some((item) => item.id === storedLessonId) ? storedLessonId : firstTextLessonId,
+  questionId: questions.some((item) => item.id === storedQuestionId) ? storedQuestionId : firstQuestionId,
+  chapterId: chapters.some((item) => item.id === storedChapterId) ? storedChapterId : chapters[0]?.id || "1",
+  quizLessonId: questions.some((item) => item.id === storedQuizLessonId) ? storedQuizLessonId : "",
+  bookmarks: storedBookmarks.filter((id) => textLessons.some((item) => item.id === id) || questions.some((item) => item.id === id)),
+  answers: JSON.parse(localStorage.getItem("answers") || "{}"),
+  answerHistory: storedAnswerHistory,
+  readLessons: storedReadLessons.filter((id) => textLessons.some((item) => item.id === id)),
+  readLessonHistory: storedReadLessonHistory,
+  studySeconds: Number(localStorage.getItem("studySeconds") || "0"),
+  mypageSection: localStorage.getItem("mypageSection") || "data",
+  profile: {
+    name: storedProfile.name || "ホスピタリティ論 受講生",
+    userId: storedProfile.userId || "student123",
+  },
+};
+
+const $ = (selector) => document.querySelector(selector);
+const main = $("#mainContent");
+const sidebar = $("#chapterNav");
+const rightbar = $("#rightbar");
+const modal = $("#appModal");
+const toast = $("#toast");
+
+function icon(name, className = "") {
+  return `<i class="${className}" data-lucide="${name}" aria-hidden="true"></i>`;
+}
+
+function textLessonsForChapter(chapterId) {
+  return textLessons.filter((item) => item.chapterId === String(chapterId));
+}
+
+function questionsForChapter(chapterId) {
+  return questions.filter((item) => item.chapterId === String(chapterId));
+}
+
+function textLessonById(id) {
+  return textLessons.find((item) => item.id === id) || textLessons[0];
+}
+
+function questionById(id) {
+  return questions.find((item) => item.id === id) || questions[0];
+}
+
+function chapterById(id) {
+  return chapters.find((item) => item.id === String(id)) || chapters[0];
+}
+
+function saveState() {
+  localStorage.setItem("view", state.view);
+  localStorage.setItem("lessonId", state.lessonId);
+  localStorage.setItem("questionId", state.questionId);
+  localStorage.setItem("chapterId", state.chapterId);
+  localStorage.setItem("quizLessonId", state.quizLessonId);
+  localStorage.setItem("bookmarks", JSON.stringify(state.bookmarks));
+  localStorage.setItem("answers", JSON.stringify(state.answers));
+  localStorage.setItem("answerHistory", JSON.stringify(state.answerHistory));
+  localStorage.setItem("readLessons", JSON.stringify(state.readLessons));
+  localStorage.setItem("readLessonHistory", JSON.stringify(state.readLessonHistory));
+  localStorage.setItem("studySeconds", String(state.studySeconds));
+  localStorage.setItem("mypageSection", state.mypageSection);
+  localStorage.setItem("profile", JSON.stringify(state.profile));
+}
+
+function progress() {
+  const done = Object.keys(state.answers).filter((id) => questions.some((item) => item.id === id)).length;
+  return { done, total: questions.length, percent: questions.length ? Math.round((done / questions.length) * 100) : 0 };
+}
+
+function correctAnswerCount() {
+  return Object.entries(state.answers).filter(([id, answer]) => {
+    const question = questions.find((item) => item.id === id);
+    return question && question.quiz.answer === answer;
+  }).length;
+}
+
+function correctRate() {
+  const done = progress().done;
+  return done ? Math.round((correctAnswerCount() / done) * 100) : 0;
+}
+
+function textProgress() {
+  const done = state.readLessons.filter((id) => textLessons.some((item) => item.id === id)).length;
+  return { done, total: textLessons.length, percent: textLessons.length ? Math.round((done / textLessons.length) * 100) : 0 };
+}
+
+function formatStudyTime(seconds = state.studySeconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  if (hours <= 0) return `${minutes}分`;
+  return `${hours}時間 ${minutes}分`;
+}
+
+function markLessonRead(id) {
+  if (id && !state.readLessons.includes(id)) {
+    state.readLessons.unshift(id);
+  }
+  if (id) {
+    state.readLessonHistory[id] = { readAt: Date.now() };
+  }
+}
+
+function recentRecords(limit = 6) {
+  const quizRecords = Object.entries(state.answerHistory).map(([id, record]) => {
+    const question = questionById(id);
+    const correct = question.quiz.answer === record.selected;
+    return {
+      id,
+      type: "問題演習",
+      title: `${question.id} ${question.title}`,
+      meta: correct ? "正解" : "復習が必要",
+      date: record.answeredAt || 0,
+      view: "quiz",
+    };
+  });
+  const textRecords = state.readLessons.map((id, index) => {
+    const unit = textLessonById(id);
+    return {
+      id,
+      type: "テキスト",
+      title: `${unit.id} ${unit.title}`,
+      meta: "読了",
+      date: state.readLessonHistory[id]?.readAt || 0,
+      view: "text",
+    };
+  });
+  return [...quizRecords, ...textRecords].sort((a, b) => b.date - a.date).slice(0, limit);
+}
+
+function isBookmarked(id) {
+  return state.bookmarks.includes(id);
+}
+
+function lessonCard(type, iconName, title, body) {
+  return `<section class="lesson-card ${type}" role="button" tabindex="0" data-action="open-card" data-title="${title}" data-modal-type="${type}">${icon(iconName)}<div><h2>${title}</h2><p>${body}</p></div>${icon("chevron-right")}</section>`;
+}
+
+function bookmarkCard(id, title, text, page, view) {
+  const attrs = view === "quiz" ? `data-action="start-quiz" data-quiz-id="${id}"` : `data-text-lesson="${id}"`;
+  return `<button class="bookmark-card" type="button" ${attrs}><span>${id}</span><b>${title}</b><small>${text}</small><em>${page}</em>${icon("chevron-right")}</button>`;
+}
+
+function openModal(title, html) {
+  modal.classList.remove("lesson-modal");
+  $("#modalTitle").textContent = title;
+  $("#modalBody").innerHTML = html;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function closeModal() {
+  modal.classList.remove("open");
+  modal.classList.remove("lesson-modal");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function lessonModalRows(unit, type) {
+  const deep = textbookModalContent[unit.id];
+  if (deep?.terms?.length) {
+    const title = type === "point" ? "重要語句" : type === "caution" ? "注意する語句" : type === "related" ? "過去問で見る語句" : "教科書の整理";
+    return deep.terms.map(([head, body]) => `<tr><th>${head}</th><td><b>${title}</b><br>${body}</td></tr>`).join("");
+  }
+  const rows = {
+    basic: [
+      ["学ぶ内容", unit.summary],
+      ["覚える軸", unit.points.join(" / ")],
+      ["試験での見方", unit.exam],
+    ],
+    point: unit.points.map((point, index) => [`ポイント${index + 1}`, point]),
+    caution: [
+      ["注意する場面", unit.caution],
+      ["確認すること", "使用者の年齢、体質、基礎疾患、妊娠・授乳、併用薬、使用期間を確認します。"],
+      ["対応の基本", "迷う場合は自己判断を促さず、医師・薬剤師・登録販売者への相談や受診勧奨につなげます。"],
+    ],
+    related: [
+      ["問われ方", unit.exam],
+      ["解くときの視点", "成分名、目的、禁忌、相談すべき症状、販売時の情報提供を分けて読みます。"],
+      ["復習方法", "誤りの選択肢は、どの語句が誤りなのかを一つずつ言い換えて確認します。"],
+    ],
+  }[type] || [];
+  return rows.map(([head, body]) => `<tr><th>${head}</th><td>${body}</td></tr>`).join("");
+}
+
+function lessonModalCards(unit, type) {
+  const deep = textbookModalContent[unit.id];
+  if (deep?.checks?.length) {
+    return deep.checks.map((text, index) => {
+      const labels = type === "caution" ? ["禁忌", "相談", "中止"] : type === "related" ? ["正誤", "組合せ", "復習"] : ["確認", "理解", "説明"];
+      return `<article><b>${labels[index] || `確認${index + 1}`}</b><p>${text}</p></article>`;
+    }).join("");
+  }
+  const cards = {
+    basic: [
+      ["定義", "何を目的として使う内容なのかを最初に押さえます。"],
+      ["使い分け", "似た用語や成分は、目的・対象・使用場面で区別します。"],
+      ["確認", "本文のキーワードを過去問の表現へつなげます。"],
+    ],
+    point: unit.points.map((point) => ["重要", point]),
+    caution: [
+      ["禁忌", "してはいけないことに当たる内容は優先して確認します。"],
+      ["相談", "症状が続く、悪化する、基礎疾患がある場合は相談につなげます。"],
+      ["記録", "販売時に確認した内容を、次の説明や復習につなげます。"],
+    ],
+    related: [
+      ["正誤問題", "一文の中に複数の条件が入るため、前半と後半を分けて判断します。"],
+      ["組合せ問題", "全選択肢を覚えるより、各記述の正誤を先に確定します。"],
+      ["復習", "間違えた選択肢をテキスト本文に戻して確認します。"],
+    ],
+  }[type] || [];
+  return cards.map(([title, text]) => `<article><b>${title}</b><p>${text}</p></article>`).join("");
+}
+
+function openLessonModal(type = "basic") {
+  const unit = textLessonById(state.lessonId);
+  const deep = textbookModalContent[unit.id];
+  const modalInfo = {
+    basic: { title: "教材の内容", icon: "book-open", accent: "blue" },
+    point: { title: "覚えるポイント", icon: "lightbulb", accent: "green" },
+    caution: { title: "注意", icon: "triangle-alert", accent: "orange" },
+    related: { title: "過去問での見方", icon: "clipboard-list", accent: "blue" },
+  }[type] || { title: "教材の内容", icon: "book-open", accent: "blue" };
+  const html = `
+    <section class="textbook-modal-detail ${modalInfo.accent}">
+      <header>
+        ${icon(modalInfo.icon)}
+        <div>
+          <span>${unit.id}</span>
+          <h1>${modalInfo.title}</h1>
+        </div>
+        <button class="outline-button ${isBookmarked(unit.id) ? "saved" : ""}" type="button" data-action="toggle-bookmark">
+          ${icon(isBookmarked(unit.id) ? "bookmark-check" : "bookmark")} ${isBookmarked(unit.id) ? "ブックマーク済み" : "ブックマークに追加"}
+        </button>
+      </header>
+      <p class="modal-lead">${deep?.body?.[0] || unit.summary}</p>
+      ${deep?.body?.length ? `<section class="modal-textbook-body">${deep.body.map((paragraph) => `<p>${paragraph}</p>`).join("")}</section>` : ""}
+      <h2>1. 全体像</h2>
+      <table class="modal-table">
+        <tbody>${lessonModalRows(unit, type)}</tbody>
+      </table>
+      <h2>2. 理解の整理</h2>
+      <div class="modal-card-grid">${lessonModalCards(unit, type)}</div>
+      ${deep?.terms?.length ? `
+        <h2>3. 用語と試験での読み方</h2>
+        <div class="modal-term-list">
+          ${deep.terms.map(([term, detail]) => `<section><b>${term}</b><p>${detail}</p></section>`).join("")}
+        </div>
+      ` : ""}
+      <section class="modal-warning">
+        ${icon(type === "caution" ? "triangle-alert" : "lightbulb")}
+        <div>
+          <h2>${type === "caution" ? "注意ポイント" : "覚えるポイント"}</h2>
+          <ul>${(deep?.checks || unit.points).map((point) => `<li>${point}</li>`).join("")}</ul>
+          <p>${unit.caution}</p>
+        </div>
+      </section>
+      <button class="modal-close-button" type="button" data-action="close-modal">閉じる</button>
+    </section>
+  `;
+  openModal(modalInfo.title, html);
+  modal.classList.add("lesson-modal");
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 1700);
+}
+
+function renderSidebar() {
+  if (["home", "bookmarks", "mypage"].includes(state.view)) {
+    sidebar.innerHTML = "";
+    return;
+  }
+  if (state.view === "quiz") return renderQuizIndexSidebar();
+  if (state.view === "quiz-detail") return renderQuizDetailSidebar();
+  renderTextSidebar();
+}
+
+function renderTextSidebar() {
+  const current = textLessonById(state.lessonId);
+  const activeChapterId = state.view === "chapter-detail" || state.view === "lesson" ? current.chapterId : "";
+  const textTotalPages = chapters.reduce((sum, chapter) => sum + chapter.pages, 0);
+  const textProgress = state.view === "text"
+    ? { done: 0, total: textTotalPages, percent: 0 }
+    : { done: 13, total: 20, percent: 65 };
+  sidebar.innerHTML = `
+    <section class="panel nav-panel textbook-index-nav ${state.view === "chapter-detail" ? "chapter-detail-nav" : ""}">
+      <h2>${icon(state.view === "quiz-question" ? "square-pen" : "book-open")}${state.view === "quiz-question" ? "問題演習" : "テキスト"}</h2>
+      <section class="progress-card index-progress">
+        <div><span>学習の進捗</span><b>${textProgress.percent}%</b></div>
+        <div><span>${textProgress.done}</span><small>${textProgress.done}/${textProgress.total}ページ</small></div>
+        <div class="progress-track"><span style="width:${textProgress.percent}%"></span></div>
+      </section>
+      <div class="chapter-list">
+        ${chapters.map((chapter) => `
+          <button class="chapter-head ${chapter.id === activeChapterId ? "active" : ""}" type="button" data-action="open-chapter" data-chapter-id="${chapter.id}">
+            <span>第${chapter.id}章</span>
+            <strong>${chapter.title}</strong>
+            ${icon(chapter.id === activeChapterId ? "chevron-up" : "chevron-down")}
+          </button>
+          ${chapter.id === activeChapterId ? `<div class="toc-nav">${textLessonsForChapter(chapter.id).map((unit) => `
+            <button class="chapter-link ${unit.id === current.id ? "active" : ""}" type="button" data-text-lesson="${unit.id}">
+              <span>${unit.id}</span><strong>${unit.title}</strong>
+            </button>
+          `).join("")}</div>` : ""}
+        `).join("")}
+      </div>
+      <button class="outline-wide" type="button" data-action="open-help">${icon("circle-help")}使い方</button>
+    </section>
+  `;
+}
+
+function renderQuizIndexSidebar() {
+  sidebar.innerHTML = `
+    <section class="quiz-index-sidebar">
+      <h1>問題演習</h1>
+      <section class="progress-card">
+        <div class="progress-meta"><span>学習の進捗</span><b>${progress().percent}%</b></div>
+        <div class="progress-track"><span style="width:${progress().percent}%"></span></div>
+        <div class="progress-pages"><small>${progress().done}</small><small>${progress().done} / ${progress().total}問</small></div>
+      </section>
+      <h2>章を選択</h2>
+      <div class="quiz-chapter-list">
+        ${chapters.map((chapter) => `
+          <button type="button" data-action="choose-quiz-chapter" data-chapter-id="${chapter.id}">
+            <span>第 ${chapter.id} 章</span>
+            <strong>${chapter.title}</strong>
+            ${icon("chevron-down")}
+          </button>
+        `).join("")}
+      </div>
+      <section class="quiz-help-card">
+        <h3>${icon("circle-help")}問題の使い方</h3>
+        <p>章を選ぶと、その章の問題一覧が開きます。問題カードを押すと、1問ずつ解答と解説を確認できます。</p>
+      </section>
+    </section>
+  `;
+}
+
+function renderQuizDetailSidebar() {
+  const currentChapter = chapterById(state.chapterId);
+  sidebar.innerHTML = `
+    <section class="quiz-index-sidebar quiz-detail-sidebar">
+      <h1>問題演習</h1>
+      <section class="progress-card">
+        <div class="progress-meta"><span>学習の進捗</span><b>${progress().percent}%</b></div>
+        <div class="progress-track"><span style="width:${progress().percent}%"></span></div>
+        <div class="progress-pages"><small>${progress().done}</small><small>${progress().done} / ${progress().total}問</small></div>
+      </section>
+      <h2>章を選択</h2>
+      <div class="quiz-chapter-list quiz-detail-list">
+        ${chapters.map((chapter) => `
+          <div class="quiz-section ${chapter.id === currentChapter.id ? "open" : ""}">
+            <button type="button" data-action="choose-quiz-chapter" data-chapter-id="${chapter.id}">
+              <span>第 ${chapter.id} 章</span>
+              <strong>${chapter.title}</strong>
+              ${icon(chapter.id === currentChapter.id ? "chevron-up" : "chevron-down")}
+            </button>
+            <div class="quiz-lesson-list">
+              ${questionsForChapter(chapter.id).map((entry) => `
+                <button class="${entry.id === state.quizLessonId ? "active" : ""}" type="button" data-action="select-quiz-lesson" data-quiz-id="${entry.id}">
+                  <span>${entry.id}</span>
+                  <strong>${entry.title}</strong>
+                  <small>${entry.chapterQuestionIndex}問 / ${entry.quizTotal || 20}問</small>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      <section class="quiz-help-card">
+        <h3>${icon("circle-help")}問題の使い方</h3>
+        <p>章を選ぶと、その章の問題一覧が開きます。選択した問題は下のボタンからそのまま開始できます。</p>
+      </section>
+    </section>
+  `;
+}
+
+function renderHome() {
+  const p = progress();
+  main.innerHTML = `
+    <section class="home-page">
+      <div class="hero-block">
+        <h1>登録販売者アプリ</h1>
+        <p>午前の部の過去問をもとに、テキストと問題演習を章ごとに学べるようにまとめました。</p>
+      </div>
+      <section class="panel">
+        <h2>${icon("bar-chart-3")}学習の進捗</h2>
+        <div class="progress-card">
+          <div class="progress-meta"><span>進捗</span><b>${p.percent}%</b></div>
+          <div class="progress-track"><span style="width:${p.percent}%"></span></div>
+          <div class="progress-pages"><small>${p.done}</small><small>${p.done} / ${p.total}ページ</small></div>
+        </div>
+      </section>
+      <div class="home-grid">
+        <button class="home-card" type="button" data-view="text">${icon("book-open")}<div><b>テキスト</b><small>章ごとの教材を読む</small></div>${icon("chevron-right")}</button>
+        <button class="home-card" type="button" data-view="quiz">${icon("square-pen")}<div><b>問題演習</b><small>過去問を解いて確認する</small></div>${icon("chevron-right")}</button>
+        <button class="home-card" type="button" data-view="bookmarks">${icon("bookmark")}<div><b>ブックマーク</b><small>あとで見返す内容をまとめる</small></div>${icon("chevron-right")}</button>
+        <button class="home-card" type="button" data-view="mypage">${icon("circle-user-round")}<div><b>マイページ</b><small>学習設定と記録を見る</small></div>${icon("chevron-right")}</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderTextIndex() {
+  main.innerHTML = `
+    <section class="textbook-index-page">
+      <h1>もくじ</h1>
+      <div class="toc-card-list">
+        ${chapters.map((chapter) => `
+          <button class="toc-card" type="button" data-action="open-chapter" data-chapter-id="${chapter.id}">
+            ${icon("book-open")}
+            <div>
+              <b>第${chapter.id}章</b>
+              <strong>${chapter.title}</strong>
+              <small>${chapter.pages}ページ</small>
+            </div>
+            ${icon("chevron-right")}
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderChapterDetail() {
+  const currentChapter = chapterById(state.chapterId);
+  const units = textLessonsForChapter(state.chapterId);
+  const chapterIndex = chapters.findIndex((chapter) => chapter.id === currentChapter.id);
+  const prevChapter = chapters[Math.max(0, chapterIndex - 1)];
+  const nextChapter = chapters[Math.min(chapters.length - 1, chapterIndex + 1)];
+  main.innerHTML = `
+    <section class="chapter-detail-page">
+      <nav class="breadcrumbs">
+        <button data-view="home">ホーム</button><span>›</span>
+        <button data-view="text">テキスト</button><span>›</span>
+        <strong>第${currentChapter.id}章 ${currentChapter.title}</strong>
+      </nav>
+      <header class="chapter-detail-head">
+        <h1>第${currentChapter.id}章 ${currentChapter.title}</h1>
+        <p>${currentChapter.overview}</p>
+      </header>
+      <div class="chapter-lesson-cards">
+        ${units.map((unit) => `
+          <button class="chapter-lesson-card" type="button" data-text-lesson="${unit.id}">
+            ${icon("book-open")}
+            <span>${unit.id}</span>
+            <strong>${unit.title}</strong>
+            <small>${unit.summary}</small>
+            <em>教材を開く</em>
+            ${icon("chevron-right")}
+          </button>
+        `).join("")}
+      </div>
+      <footer class="chapter-detail-footer">
+        <button class="outline-button" type="button" data-action="open-chapter" data-chapter-id="${prevChapter.id}" ${prevChapter.id === currentChapter.id ? "disabled" : ""}>${icon("chevron-left")}前の章</button>
+        <span>${currentChapter.id} / ${chapters.length}章</span>
+        <button class="outline-button" type="button" data-action="open-chapter" data-chapter-id="${nextChapter.id}" ${nextChapter.id === currentChapter.id ? "disabled" : ""}>次の章${icon("chevron-right")}</button>
+      </footer>
+    </section>
+  `;
+}
+
+function renderTextLesson() {
+  const unit = textLessonById(state.lessonId);
+  main.innerHTML = `
+    <section class="text-page">
+      <nav class="breadcrumbs">
+        <button data-view="home">ホーム</button><span>›</span>
+        <button data-view="text">テキスト</button><span>›</span>
+        <button data-action="open-chapter" data-chapter-id="${unit.chapterId}">第${unit.chapterId}章</button><span>›</span>
+        <strong>${unit.title}</strong>
+      </nav>
+      <header class="lesson-header">
+        <div><span class="lesson-number">${unit.id}</span><h1>${unit.title}</h1></div>
+        <button class="outline-button ${isBookmarked(unit.id) ? "saved" : ""}" type="button" data-action="toggle-bookmark">${icon(isBookmarked(unit.id) ? "bookmark-check" : "bookmark")} ${isBookmarked(unit.id) ? "ブックマーク済み" : "ブックマークに追加"}</button>
+      </header>
+      <p class="lead">${unit.summary}</p>
+      ${lessonCard("basic", "book-open", "教材の内容", `<p>${unit.summary}</p>`)}
+      ${lessonCard("point", "lightbulb", "覚えるポイント", `<ul>${unit.points.map((point) => `<li>${point}</li>`).join("")}</ul>`)}
+      ${lessonCard("caution", "triangle-alert", "注意", unit.caution)}
+      ${pager("前のページ", `${unit.unitIndex} / ${textLessonsForChapter(unit.chapterId).length}ページ`, "次のページ")}
+    </section>
+  `;
+}
+
+function renderQuizIndex() {
+  main.innerHTML = `
+    <section class="quiz-index-page">
+      <div class="empty-quiz-panel">
+        ${icon("clipboard-list")}
+        <h1>章を選択</h1>
+        <p>章を選ぶと、その章の問題一覧が表示されます。</p>
+        <button type="button" disabled>問題を選ぶ<br><small>章を選んで問題一覧を開いてください</small></button>
+      </div>
+    </section>
+  `;
+}
+
+function renderQuizDetail() {
+  const currentChapter = chapterById(state.chapterId);
+  const quizCards = questionsForChapter(state.chapterId);
+  main.innerHTML = `
+    <section class="quiz-detail-page">
+      <nav class="breadcrumbs">
+        <button data-view="home">ホーム</button><span>›</span>
+        <button data-view="quiz">問題演習</button><span>›</span>
+        <strong>第${currentChapter.id}章 ${currentChapter.title}</strong>
+      </nav>
+      <header class="quiz-detail-head">
+        <h1>第${currentChapter.id}章 ${currentChapter.title}</h1>
+        <h2>問題を選択</h2>
+      </header>
+      <div class="quiz-question-cards">
+        ${quizCards.map((entry) => `
+          <button class="quiz-question-card ${entry.id === state.quizLessonId ? "selected" : ""}" type="button" data-action="start-quiz" data-quiz-id="${entry.id}">
+            <span class="quiz-question-number">${entry.id}</span>
+            <strong>${entry.title}</strong>
+            <small>${entry.chapterQuestionIndex}問 / ${entry.quizTotal || 20}問</small>
+            <span class="quiz-card-action">問題を解く ${icon("chevron-right")}</span>
+          </button>
+        `).join("")}
+      </div>
+      <footer class="quiz-detail-footer">
+        <button class="outline-button" type="button" data-view="quiz">${icon("arrow-left")}章選択に戻る</button>
+        <button class="continue-selected" type="button" data-action="start-selected-quiz" ${state.quizLessonId ? "" : "disabled"}>選択した問題を解く<br><small>${state.quizLessonId ? "問題演習を開始します" : "問題を選択してください"}</small></button>
+      </footer>
+    </section>
+  `;
+}
+
+function renderQuizQuestion() {
+  const item = questionById(state.questionId);
+  const selected = state.answers[item.id];
+  const chapterQuestions = questionsForChapter(item.chapterId);
+  const chapterIndex = chapterQuestions.findIndex((q) => q.id === item.id) + 1;
+  const chapterTotal = item.quizTotal || chapterQuestions.length;
+  const { prompt, statements } = questionPartsForItem(item);
+  const options = answerOptionsForQuestion(item, statements);
+  const correctAnswer = item.quiz.answer;
+  const answerText = correctAnswer === null ? "この問題は解なしです。" : `正解は選択肢${correctAnswer + 1}です。`;
+  const resultText = selected === undefined
+    ? ""
+    : correctAnswer === null
+      ? "この問題は解なしです。"
+      : selected === correctAnswer
+        ? "正解です。"
+        : `不正解です。${answerText}`;
+  main.innerHTML = `
+    <section class="quiz-page">
+      <nav class="breadcrumbs">
+        <button data-view="home">ホーム</button><span>›</span>
+        <button data-view="quiz">問題演習</button><span>›</span>
+        <button data-action="choose-quiz-chapter" data-chapter-id="${item.chapterId}">第${item.chapterId}章</button><span>›</span>
+        <strong>${item.id} ${item.title}</strong>
+      </nav>
+      <div class="quiz-question-head">
+        <h1>問題 <span>${chapterIndex}</span> / ${chapterTotal}</h1>
+        <button class="outline-button ${isBookmarked(item.id) ? "saved" : ""}" type="button" data-action="toggle-bookmark">${icon(isBookmarked(item.id) ? "bookmark-check" : "bookmark")} ブックマークに追加</button>
+      </div>
+      <div class="question-progress"><span style="width:${Math.round((chapterIndex / chapterTotal) * 100)}%"></span></div>
+      <section class="question-card">
+        <p>${prompt}</p>
+        ${statements.length ? `<div class="statement-list">${statements.map((statement) => `
+          <div class="statement-row"><b>${statement.label}</b><span>${statement.text}</span></div>
+        `).join("")}</div>` : ""}
+      </section>
+      <p class="choice-instruction">${item.quiz.prompt || "最も適切なものを一つ選びなさい。"}</p>
+      <div class="choices combo-choices">
+        ${options.map((option, index) => `<label class="${selected === index ? "selected" : ""}">
+          <input type="radio" name="answer" value="${index}" ${selected === index ? "checked" : ""}>
+          <strong>${option.number}.</strong>
+          ${option.parts.length ? `<span class="choice-combo">${option.parts.map((part) => `<span><b>${part.label}</b>${part.value ? `: ${part.value}` : ""}</span>`).join("")}</span>` : `<span>${option.text}</span>`}
+        </label>`).join("")}
+      </div>
+      <p class="answer ${selected !== undefined ? "show" : ""}">${selected === undefined ? "" : `${resultText} ${item.quiz.note || ""}`}</p>
+      ${pager("前の問題", "", "次の問題")}
+    </section>
+  `;
+}
+
+function renderBookmarks() {
+  const textItems = state.bookmarks
+    .filter((id) => textLessons.some((item) => item.id === id))
+    .map((id) => textLessonById(id));
+  const quizItems = state.bookmarks
+    .filter((id) => questions.some((item) => item.id === id))
+    .map((id) => questionById(id));
+  main.innerHTML = `
+    <section class="bookmarks-page">
+      <section><h2>テキスト</h2>${textItems.slice(0, 3).map((unit) => bookmarkCard(unit.id, unit.title, unit.summary, `${unit.unitIndex}/${textLessonsForChapter(unit.chapterId).length}ページ`, "text")).join("")}</section>
+      <section><h2>問題演習</h2>${quizItems.slice(0, 3).map((item) => bookmarkCard(item.id, item.title, item.quiz.note, `${item.page}/${questions.length}ページ`, "quiz")).join("")}</section>
+    </section>
+  `;
+}
+
+function renderMyPage() {
+  main.innerHTML = `
+    <section class="profile-page">
+      <section class="profile-card"><h2>学習記録</h2><p>午前の部の学習データをもとに、テキストと問題演習を使い分けて学べます。</p></section>
+      <section class="profile-card"><h2>設定</h2><p>表示や記録はブラウザのローカルストレージに保存されます。</p></section>
+    </section>
+  `;
+}
+
+function renderMyPage() {
+  const quiz = progress();
+  const text = textProgress();
+  const bookmarks = state.bookmarks.length;
+  const records = recentRecords(8);
+  const menuItems = [
+    ["data", "学習データ"],
+    ["records", "学習記録"],
+    ["settings", "設定"],
+    ["support", "ヘルプ・サポート"],
+    ["logout", "ログアウト"],
+  ];
+  const menu = `
+    <aside class="mypage-menu">
+      <h1>${icon("user")}マイページ</h1>
+      ${menuItems.map(([id, label]) => `
+        <button class="${state.mypageSection === id ? "active" : ""}" type="button" data-action="mypage-section" data-section="${id}">
+          <span>${label}</span>${icon("chevron-right")}
+        </button>
+      `).join("")}
+    </aside>
+  `;
+  const profile = `
+    <header class="profile-head">
+      <div class="avatar" aria-hidden="true"></div>
+      <div>
+        <h1>${state.profile.name}</h1>
+        <p>ID: ${state.profile.userId}</p>
+      </div>
+      <button type="button" data-action="edit-profile">プロフィールを編集</button>
+    </header>
+  `;
+  const dataPanel = `
+    <section class="profile-card profile-data-card">
+      <h2>学習データ</h2>
+      <dl>
+        <div><dt>${icon("clock-3")}学習の進捗</dt><dd>${quiz.percent}%</dd></div>
+        <div><dt>${icon("timer")}総学習時間</dt><dd>${formatStudyTime()}</dd></div>
+        <div><dt>${icon("square-check-big")}解いた問題数</dt><dd>${quiz.done}問</dd></div>
+        <div><dt>${icon("badge-check")}正答率</dt><dd>${correctRate()}%</dd></div>
+      </dl>
+    </section>
+    <section class="mypage-progress-grid">
+      <div class="profile-card">
+        <h2>問題演習</h2>
+        <div class="mini-progress"><span style="width:${quiz.percent}%"></span></div>
+        <p>${quiz.done} / ${quiz.total}問</p>
+        <button class="profile-link" type="button" data-view="quiz"><span>問題演習を続ける</span>${icon("chevron-right")}</button>
+      </div>
+      <div class="profile-card">
+        <h2>テキスト</h2>
+        <div class="mini-progress"><span style="width:${text.percent}%"></span></div>
+        <p>${text.done} / ${text.total}ページ</p>
+        <button class="profile-link" type="button" data-view="text"><span>テキストを読む</span>${icon("chevron-right")}</button>
+      </div>
+      <div class="profile-card">
+        <h2>ブックマーク</h2>
+        <p class="profile-count">${bookmarks}</p>
+        <button class="profile-link" type="button" data-view="bookmarks"><span>ブックマークを見る</span>${icon("chevron-right")}</button>
+      </div>
+    </section>
+  `;
+  const recordsPanel = `
+    <section class="profile-card">
+      <h2>学習記録</h2>
+      <div class="record-list">
+        ${records.length ? records.map((record) => `
+          <button type="button" data-action="${record.view === "quiz" ? "start-quiz" : "open-record-lesson"}" ${record.view === "quiz" ? `data-quiz-id="${record.id}"` : `data-lesson-id="${record.id}"`}>
+            <span>${record.type}</span>
+            <b>${record.title}</b>
+            <small>${record.meta}</small>
+            ${icon("chevron-right")}
+          </button>
+        `).join("") : `<p class="empty-note">まだ学習記録がありません。テキストを読むか問題を解くとここに表示されます。</p>`}
+      </div>
+    </section>
+  `;
+  const settingsPanel = `
+    <section class="profile-card">
+      <h2>設定</h2>
+      <button class="profile-link" type="button" data-action="export-study-data"><span>学習データを書き出す</span>${icon("download")}</button>
+      <button class="profile-link" type="button" data-action="clear-study-data"><span>学習データをリセット</span>${icon("rotate-ccw")}</button>
+    </section>
+  `;
+  const supportPanel = `
+    <section class="profile-card">
+      <h2>ヘルプ・サポート</h2>
+      <button class="profile-link" type="button" data-action="open-help"><span>使い方を見る</span>${icon("circle-help")}</button>
+      <button class="profile-link" type="button" data-action="open-support"><span>学習データについて</span>${icon("info")}</button>
+    </section>
+  `;
+  const logoutPanel = `
+    <section class="profile-card">
+      <h2>ログアウト</h2>
+      <p>このアプリはブラウザ内に学習データを保存しています。ログアウト操作では画面表示だけをホームに戻します。</p>
+      <button class="profile-link" type="button" data-action="logout"><span>ホームへ戻る</span>${icon("log-out")}</button>
+    </section>
+  `;
+  const panel = {
+    data: dataPanel,
+    records: recordsPanel,
+    settings: settingsPanel,
+    support: supportPanel,
+    logout: logoutPanel,
+  }[state.mypageSection] || dataPanel;
+  main.innerHTML = `
+    <section class="mypage-page">
+      ${menu}
+      <section class="mypage-main">
+        ${profile}
+        ${panel}
+      </section>
+    </section>
+  `;
+}
+
+function splitQuestionText(text) {
+  const markers = [...text.matchAll(/([アイウエオ])\s/g)];
+  if (!markers.length) return { prompt: text, statements: [] };
+  const prompt = text.slice(0, markers[0].index).trim();
+  const statements = markers.map((match, index) => {
+    const start = match.index + match[0].length;
+    const end = markers[index + 1]?.index ?? text.length;
+    return {
+      label: match[1],
+      text: text.slice(start, end).trim(),
+    };
+  });
+  return { prompt, statements };
+}
+
+function questionPartsForItem(item) {
+  return {
+    prompt: item.quiz.q || item.basic || "",
+    statements: item.quiz.statements || []
+  };
+}
+
+function answerOptionsForQuestion(item, statements) {
+  if (Array.isArray(item.quiz.options) && item.quiz.options.length) {
+    const normalized = normalizeCollapsedPairOptions(item.quiz.options);
+    return normalized.map((option, index) => ({
+      number: option.number || index + 1,
+      text: option.text || "",
+      parts: option.parts || [],
+    }));
+  }
+  const statementCount = statements.length;
+  const isTruthTable = item.quiz.q.includes("正誤");
+  const isPairQuestion = item.quiz.q.includes("正しいものの組み合わせ") || item.quiz.q.includes("正しい組み合わせ");
+  if (isTruthTable && statementCount >= 4) {
+    const letters = ["ア", "イ", "ウ", "エ"].slice(0, statementCount);
+    const patterns = [
+      ["正", "正", "正", "正"],
+      ["正", "誤", "正", "正"],
+      ["正", "誤", "誤", "正"],
+      ["誤", "正", "正", "誤"],
+      ["誤", "誤", "正", "誤"],
+    ];
+    return patterns.map((pattern, index) => ({
+      number: index + 1,
+      parts: letters.map((letter, partIndex) => ({ label: letter, value: pattern[partIndex] || "正" })),
+    }));
+  }
+  if (isPairQuestion && statementCount >= 4) {
+    const pairs = [["ア", "イ"], ["ア", "ウ"], ["イ", "ウ"], ["イ", "エ"], ["ウ", "エ"]];
+    return pairs.map((pair, index) => ({
+      number: index + 1,
+      parts: pair.map((letter) => ({ label: letter, value: "" })),
+    }));
+  }
+  return item.quiz.choices.map((choice, index) => ({
+    number: index + 1,
+    text: choice,
+    parts: [],
+  }));
+}
+
+function normalizeCollapsedPairOptions(options) {
+  if (options.length !== 1 || !options[0].text || options[0].parts?.length) {
+    return options;
+  }
+  const text = options[0].text;
+  const matches = [...text.matchAll(/(?:^|\s)(\d+)\s*[\.:]?\s*[（(]([アイウエ])\s*[、,]\s*([アイウエ])[）)]/g)];
+  if (!matches.length) {
+    const fallback = [...text.matchAll(/[（(]([アイウエ])\s*[、,]\s*([アイウエ])[）)]/g)];
+    if (fallback.length >= 2) {
+      return fallback.map((match, index) => ({
+        number: index + 1,
+        parts: [
+          { label: match[1], value: "" },
+          { label: match[2], value: "" },
+        ],
+      }));
+    }
+    return options;
+  }
+  return matches.map((match) => ({
+    number: Number(match[1]),
+    parts: [
+      { label: match[2], value: "" },
+      { label: match[3], value: "" },
+    ],
+  }));
+}
+
+function pager(prevLabel, centerLabel, nextLabel) {
+  if (state.view === "quiz-question") {
+    const current = questionById(state.questionId);
+    const list = questionsForChapter(current.chapterId);
+    const index = list.findIndex((item) => item.id === current.id);
+    const prev = list[Math.max(0, index - 1)];
+    const next = list[Math.min(list.length - 1, index + 1)];
+
+    const isLastInChapter = index >= list.length - 1;
+    const currentChapterNum = parseInt(current.chapterId);
+    const nextChapterNum = currentChapterNum + 1;
+    const hasNextChapter = chapterCatalog.some(ch => ch.id === String(nextChapterNum));
+
+    if (isLastInChapter && hasNextChapter) {
+      return `<footer class="pager"><button type="button" data-action="prev" ${index <= 0 ? "disabled" : ""}>${icon("chevron-left")} ${prevLabel}</button><span>${centerLabel}</span><button type="button" data-action="open-next-chapter-quiz" data-next-chapter="${nextChapterNum}" class="outline-button">次の章へ進む ${icon("chevron-right")}</button></footer>`;
+    }
+
+    return `<footer class="pager"><button type="button" data-action="prev" ${index <= 0 ? "disabled" : ""}>${icon("chevron-left")} ${prevLabel}</button><span>${centerLabel}</span><button type="button" data-action="next" ${index >= list.length - 1 ? "disabled" : ""}>${nextLabel} ${icon("chevron-right")}</button></footer>`;
+  }
+  const current = textLessonById(state.lessonId);
+  const list = textLessonsForChapter(current.chapterId);
+  const index = list.findIndex((item) => item.id === current.id);
+  return `<footer class="pager"><button type="button" data-action="prev" ${index <= 0 ? "disabled" : ""}>${icon("chevron-left")} ${prevLabel}</button><span>${centerLabel}</span><button type="button" data-action="next" ${index >= list.length - 1 ? "disabled" : ""}>${nextLabel} ${icon("chevron-right")}</button></footer>`;
+}
+
+function renderRightbar() {
+  if (["home", "bookmarks", "mypage"].includes(state.view)) {
+    rightbar.innerHTML = "";
+    return;
+  }
+  const chapter = chapterById(state.chapterId);
+  const unit = textLessonById(state.lessonId);
+  rightbar.innerHTML = `
+    <section class="panel side-quiz">
+      <div class="panel-head"><h2>${icon("clipboard-check")}学習メモ</h2><button data-action="open-help">すべて見る</button></div>
+      <p>${chapter.title}</p>
+      <label>${icon("square-pen")} 現在の教材</label>
+      <div class="compact-list"><button type="button" data-text-lesson="${unit.id}"><span>${unit.title}</span><small>第${unit.chapterId}章 ${unit.id}</small></button></div>
+      <button class="outline-wide" type="button" data-action="open-help">${icon("circle-help")}使い方を見る</button>
+    </section>
+  `;
+}
+
+function render() {
+  saveState();
+  document.body.dataset.view = state.view;
+  if (state.view === "home") renderHome();
+  if (state.view === "text") renderTextIndex();
+  if (state.view === "chapter-detail") renderChapterDetail();
+  if (state.view === "lesson") renderTextLesson();
+  if (state.view === "quiz") renderQuizIndex();
+  if (state.view === "quiz-detail") renderQuizDetail();
+  if (state.view === "quiz-question") renderQuizQuestion();
+  if (state.view === "bookmarks") renderBookmarks();
+  if (state.view === "mypage") renderMyPage();
+  renderSidebar();
+  renderRightbar();
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function setView(view) {
+  state.view = view;
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function selectTextLesson(id) {
+  const unit = textLessonById(id);
+  state.lessonId = unit.id;
+  state.chapterId = unit.chapterId;
+  state.view = "lesson";
+  markLessonRead(unit.id);
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openChapter(id) {
+  state.chapterId = String(id);
+  state.lessonId = textLessonsForChapter(id)[0]?.id || state.lessonId;
+  state.view = "chapter-detail";
+  render();
+}
+
+function openQuizChapter(id) {
+  state.chapterId = String(id);
+  state.quizLessonId = "";
+  state.view = "quiz-detail";
+  render();
+  scrollToQuizDetail();
+}
+
+function selectQuizLesson(id) {
+  state.quizLessonId = id;
+  render();
+}
+
+function startQuiz(id) {
+  const targetId = id || state.quizLessonId || questionsForChapter(state.chapterId)[0]?.id || state.questionId;
+  const item = questionById(targetId);
+  state.questionId = item.id;
+  state.quizLessonId = item.id;
+  state.chapterId = item.chapterId;
+  state.view = "quiz-question";
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function move(delta) {
+  if (state.view === "quiz-question") {
+    const current = questionById(state.questionId);
+    const list = questionsForChapter(current.chapterId);
+    const index = list.findIndex((item) => item.id === current.id);
+    const next = list[Math.max(0, Math.min(list.length - 1, index + delta))];
+    if (next) startQuiz(next.id);
+    return;
+  }
+  const current = textLessonById(state.lessonId);
+  const list = textLessonsForChapter(current.chapterId);
+  const index = list.findIndex((item) => item.id === current.id);
+  const next = list[Math.max(0, Math.min(list.length - 1, index + delta))];
+  if (next) selectTextLesson(next.id);
+}
+
+function scrollToQuizDetail() {
+  requestAnimationFrame(() => {
+    const target = document.querySelector(".quiz-detail-page");
+    if (window.matchMedia("(max-width: 760px)").matches && target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function openProfileEditor() {
+  openModal("プロフィールを編集", `
+    <form class="profile-edit-form">
+      <label>名前<input id="profileName" value="${state.profile.name}"></label>
+      <label>ID<input id="profileUserId" value="${state.profile.userId}"></label>
+      <button type="button" data-action="save-profile">${icon("save")}保存</button>
+    </form>
+  `);
+}
+
+function exportStudyData() {
+  const payload = {
+    profile: state.profile,
+    answers: state.answers,
+    answerHistory: state.answerHistory,
+    readLessons: state.readLessons,
+    readLessonHistory: state.readLessonHistory,
+    bookmarks: state.bookmarks,
+    studySeconds: state.studySeconds,
+    exportedAt: new Date().toISOString(),
+  };
+  openModal("学習データ", `<pre class="export-box">${JSON.stringify(payload, null, 2)}</pre>`);
+}
+
+function clearStudyData() {
+  state.answers = {};
+  state.answerHistory = {};
+  state.readLessons = [];
+  state.readLessonHistory = {};
+  state.bookmarks = [];
+  state.studySeconds = 0;
+  saveState();
+  showToast("学習データをリセットしました");
+  render();
+}
+
+function addStudySeconds() {
+  if (document.hidden) return;
+  state.studySeconds += 30;
+  saveState();
+  if (state.view === "mypage" && state.mypageSection === "data") render();
+}
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("button, [role='button']");
+  if (!button) return;
+  const { view, action } = button.dataset;
+  if (view) setView(view);
+  if (button.dataset.textLesson) selectTextLesson(button.dataset.textLesson);
+  if (action === "next") move(1);
+  if (action === "prev") move(-1);
+  if (action === "open-next-chapter-quiz") {
+    const nextChapter = button.dataset.nextChapter;
+    const nextChapterQuestions = questionsForChapter(nextChapter);
+    if (nextChapterQuestions.length) {
+      startQuiz(nextChapterQuestions[0].id);
+      showToast(`第${nextChapter}章へ移動しました`);
+    } else {
+      openQuizChapter(nextChapter);
+    }
+  }
+  if (action === "toggle-bookmark") {
+    const id = state.view === "quiz-question" ? state.questionId : state.lessonId;
+    if (isBookmarked(id)) state.bookmarks = state.bookmarks.filter((item) => item !== id);
+    else state.bookmarks.unshift(id);
+    showToast("ブックマークを更新しました");
+    render();
+  }
+  if (action === "open-card") openLessonModal(button.dataset.modalType || "basic");
+  if (action === "open-help") openModal("使い方", "<p>章を選んで教材や問題を開き、わからないところはブックマークして見返してください。</p>");
+  if (action === "open-chapter") openChapter(button.dataset.chapterId);
+  if (action === "choose-quiz-chapter") openQuizChapter(button.dataset.chapterId);
+  if (action === "select-quiz-lesson") selectQuizLesson(button.dataset.quizId);
+  if (action === "start-quiz") startQuiz(button.dataset.quizId);
+  if (action === "start-selected-quiz") startQuiz();
+  if (action === "open-search") openModal("検索", `<form class="search-box"><input placeholder="章名やキーワードで検索"><button type="button">${icon("search")}検索</button></form>`);
+  if (action === "mypage-section") {
+    state.mypageSection = button.dataset.section || "data";
+    render();
+  }
+  if (action === "edit-profile") openProfileEditor();
+  if (action === "save-profile") {
+    state.profile.name = $("#profileName")?.value.trim() || state.profile.name;
+    state.profile.userId = $("#profileUserId")?.value.trim() || state.profile.userId;
+    closeModal();
+    showToast("プロフィールを更新しました");
+    render();
+  }
+  if (action === "open-record-lesson") selectTextLesson(button.dataset.lessonId);
+  if (action === "export-study-data") exportStudyData();
+  if (action === "clear-study-data" && confirm("学習データをリセットしますか？")) clearStudyData();
+  if (action === "open-support") openModal("学習データについて", "<p>学習時間、解答履歴、読了したテキスト、ブックマークはこのブラウザに保存されます。別の端末やブラウザには自動同期されません。</p>");
+  if (action === "logout") setView("home");
+  if (action === "close-modal") closeModal();
+});
+
+document.addEventListener("change", (event) => {
+  if (event.target.name === "answer") {
+    const selected = Number(event.target.value);
+    const item = questionById(state.questionId);
+    state.answers[state.questionId] = selected;
+    state.answerHistory[state.questionId] = {
+      selected,
+      correct: item.quiz.answer === selected,
+      answeredAt: Date.now(),
+    };
+    render();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeModal();
+});
+
+$("#mobileMenu")?.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+});
+
+modal.addEventListener("click", (event) => {
+  if (event.target.dataset.action === "close-modal") closeModal();
+});
+
+setInterval(addStudySeconds, 30000);
+window.addEventListener("beforeunload", saveState);
+
+render();
+
+  </script>
+</body>
+</html>
