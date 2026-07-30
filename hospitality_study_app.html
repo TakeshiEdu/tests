@@ -4112,6 +4112,21 @@ const storedReadLessons = JSON.parse(localStorage.getItem("readLessons") || "[]"
 const storedReadLessonHistory = JSON.parse(localStorage.getItem("readLessonHistory") || "{}");
 const storedAnswerHistory = JSON.parse(localStorage.getItem("answerHistory") || "{}");
 const storedProfile = JSON.parse(localStorage.getItem("profile") || "{}");
+const APP_STORAGE_KEYS = [
+  "view",
+  "lessonId",
+  "questionId",
+  "chapterId",
+  "quizLessonId",
+  "bookmarks",
+  "answers",
+  "answerHistory",
+  "readLessons",
+  "readLessonHistory",
+  "studySeconds",
+  "mypageSection",
+  "profile",
+];
 
 const state = {
   view: localStorage.getItem("view") || "home",
@@ -5087,15 +5102,8 @@ function exportStudyData() {
 }
 
 function clearStudyData() {
-  state.answers = {};
-  state.answerHistory = {};
-  state.readLessons = [];
-  state.readLessonHistory = {};
-  state.bookmarks = [];
-  state.studySeconds = 0;
-  saveState();
-  showToast("学習データをリセットしました");
-  render();
+  APP_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+  window.location.reload();
 }
 
 function addStudySeconds() {
@@ -5152,7 +5160,7 @@ document.addEventListener("click", (event) => {
   }
   if (action === "open-record-lesson") selectTextLesson(button.dataset.lessonId);
   if (action === "export-study-data") exportStudyData();
-  if (action === "clear-study-data" && confirm("学習データをリセットしますか？")) clearStudyData();
+  if (action === "clear-study-data" && confirm("このブラウザに保存された学習データ（進捗・解答履歴・ブックマークなど）をリセットしますか？")) clearStudyData();
   if (action === "open-support") openModal("学習データについて", "<p>学習時間、解答履歴、読了したテキスト、ブックマークはこのブラウザに保存されます。別の端末やブラウザには自動同期されません。</p>");
   if (action === "logout") setView("home");
   if (action === "close-modal") closeModal();
